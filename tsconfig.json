@@ -1,7 +1,11 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "compilerOptions": {
+    "composite": true, // Required when using project references
+    "baseUrl": ".", // Base URL for module resolution
+    "paths": {
+      "@/*": ["src/*"] // Path alias
+    },
+    "emitDeclarationOnly": true // Ensures TypeScript only emits declaration files (useful in a monorepo/project references setup)
+  },
+  "include": ["src"]
 }
