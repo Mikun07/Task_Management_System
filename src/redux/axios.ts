@@ -1,7 +1,8 @@
+import { BASE_URL } from "@/config/api";
+import { userToken } from "@/config/auth";
 import axios, { AxiosInstance } from "axios";
 import { EnhancedStore } from "@reduxjs/toolkit";
-import { userToken } from "@/config/auth";
-import { BASE_URL } from "@/config/api";
+
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

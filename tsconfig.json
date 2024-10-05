@@ -5,7 +5,10 @@
     "paths": {
       "@/*": ["src/*"] // Path alias
     },
-    "emitDeclarationOnly": true // Ensures TypeScript only emits declaration files (useful in a monorepo/project references setup)
+    "emitDeclarationOnly": true, // Ensures TypeScript only emits declaration files (useful in a monorepo/project references setup)
+    "jsx": "react-jsx", // Add this line for JSX support (use "react-jsx" for React 17+)
+    "esModuleInterop": true, // Enable default imports for CommonJS modules
+    "resolveJsonModule": true // Enable importing JSON files
   },
   "include": ["src"]
 }

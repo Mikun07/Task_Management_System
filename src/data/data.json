@@ -1,0 +1,16 @@
+{
+    "Roles": [
+        {
+            "value": "Admin",
+            "label": "Admin"
+          },
+          {
+            "value": "Team Leader",
+            "label": "Team Leader"
+          },
+          {
+            "value": "Team Member",
+            "label": "Team Member"
+          }
+    ]
+}

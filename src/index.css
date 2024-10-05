@@ -66,3 +66,26 @@
     text-decoration: none;
   }
 }
+
+.custom__scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  visibility: hidden;
+}
+
+.custom__scrollbar:not(.Hidden)::-webkit-scrollbar {
+  visibility: visible;
+}
+
+.custom__scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom__scrollbar::-webkit-scrollbar-thumb {
+  background: #919191;
+  border-radius: 24px;
+}
+
+.custom__scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #007BFF;
+}
