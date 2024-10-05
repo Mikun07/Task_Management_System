@@ -37,9 +37,9 @@ const SelectInput: React.FC<SelectInputProps> = ({
         : state.isFocused
         ? "#888888"
         : "#E6E6E6",
-      boxShadow: state.isFocused ? "0 0 0 1px #A1A1A1" : "none",
+      boxShadow: state.isFocused ? "0 0 0 1px #007BFF" : "none",
       "&:hover": {
-        borderColor: isError ? "red" : isSuccess ? "green" : "#E6E6E6",
+        borderColor: isError ? "red" : isSuccess ? "green" : "",
       },
     }),
   };
