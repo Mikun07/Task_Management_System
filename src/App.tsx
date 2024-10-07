@@ -23,8 +23,8 @@ function App() {
             />
           ))}
 
-          <Route element={<PROTECTED_ROUTES />}>
-            <Route path="admin" element={<Layout />}>
+          {/* <Route element={<PROTECTED_ROUTES />}> */}
+            <Route path="/layout" element={<Layout />}>
               {PRIVATE_ROUTES.map(({ link, element }, index) => (
                 <Route
                   path={link}
@@ -37,7 +37,7 @@ function App() {
                 />
               ))}
             </Route>
-          </Route>
+          {/* </Route> */}
         </Routes>
       </Router>
     </>

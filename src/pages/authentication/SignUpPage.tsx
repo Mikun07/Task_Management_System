@@ -1,14 +1,28 @@
 import Button from "@/components/button/Button";
 import NameInput from "@/components/input/NameInput";
 import PasswordInput from "@/components/input/PasswordInput";
-import SelectInput from "@/components/input/SelectInput";
+// import SelectInput from "@/components/input/SelectInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
-import { Roles } from "../../data/data.json";
+// import { Roles } from "../../data/data.json";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { postSignUp } from "@/redux/features/signUpSlice";
+import toast from "react-hot-toast";
+import { RootState } from "@/redux/root";
 
+// // Interface for role options
+// interface OptionType {
+//   value: string;
+//   label: string;
+// }
+
+// Validation schema using Zod
 const passwordSchema = z.string().min(7, { message: "At least 7 characters" });
+
+// const roleValues = Roles.map((role) => role.value) as [string, ...string[]];
 
 const SignUpSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -26,10 +40,11 @@ const SignUpSchema = z.object({
     .max(30, { message: "At most 30 characters." }),
   phone_number: z.string().min(2, { message: "Enter phone number" }),
   password: passwordSchema,
-  role: z.string(),
+  // role: z.enum(roleValues),
+  // role: z.string(),
 });
 
-type SignUpFormValues = z.infer<typeof SignUpSchema>;
+export type SignUpFormValues = z.infer<typeof SignUpSchema>;
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -37,9 +52,48 @@ const SignUpPage = () => {
     resolver: zodResolver(SignUpSchema),
     mode: "onChange",
   });
+  const isLoading = useSelector((state: RootState) => state?.signUp?.loading);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const onSubmit: SubmitHandler<SignUpFormValues> = (data) => {
-    console.log(data);
+  // const handleRoleChange = (selectedRole: OptionType | null) => {
+  //   // Update the role in the form
+  //   if (selectedRole) {
+  //     methods.setValue("role", selectedRole.value); // Set the role value directly
+  //   } else {
+  //     methods.setValue("role", ""); // Reset the value if no role is selected
+  //   }
+  // };
+
+  // const roleOptions = Roles.map((role) => ({
+  //   value: role.value,
+  //   label: role.label,
+  // }));
+
+  const handleSignUp: SubmitHandler<SignUpFormValues> = (signUpValues) => {
+    const signUpData = {
+      email: signUpValues.email,
+      username: signUpValues.username,
+      first_name: signUpValues.first_name,
+      last_name: signUpValues.last_name,
+      phone_number: signUpValues.phone_number,
+      password: signUpValues.password,
+      role: "admin",
+    };
+
+    dispatch(postSignUp(signUpData))
+      .then((result) => {
+        const { payload } = result;
+        console.log({ payload });
+        const success: boolean = Boolean(payload);
+        if (success) {
+          navigate("/login");
+        } else {
+          toast.error("Sign-up failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        toast.error("Sign-up error: " + error.message);
+      });
   };
 
   const handleLogin = () => {
@@ -54,7 +108,7 @@ const SignUpPage = () => {
             <h1 className="font-semibold flex justify-center">Sign Up</h1>
 
             <form
-              onSubmit={methods.handleSubmit(onSubmit)}
+              onSubmit={methods.handleSubmit(handleSignUp)}
               className="flex flex-col gap-y-4 mt-4"
             >
               <div className="grid grid-cols-2 gap-4">
@@ -64,48 +118,42 @@ const SignUpPage = () => {
                   label="Email Address"
                   error={methods.formState.errors.email}
                 />
-
                 <NameInput
                   name="username"
-                  type="name"
+                  type="text"
                   label="Username"
                   error={methods.formState.errors.username}
                 />
-
                 <NameInput
                   name="first_name"
-                  type="name"
+                  type="text"
                   label="First Name"
                   error={methods.formState.errors.first_name}
                 />
-
                 <NameInput
                   name="last_name"
-                  type="name"
+                  type="text"
                   label="Last Name"
                   error={methods.formState.errors.last_name}
                 />
-
                 <NameInput
-                  name=" phone_number"
-                  type="name"
+                  name="phone_number"
+                  type="text"
                   label="Phone Number"
                   error={methods.formState.errors.phone_number}
                 />
-
                 <PasswordInput
                   name="password"
                   label="Password"
                   error={methods.formState.errors.password}
                 />
-
-                <SelectInput
-                  name="role"
-                  label="Select Role"
-                  options={Roles}
-                  placeholder="Select a role..."
-                  error={methods.formState.errors.role}
-                />
+                {/* <SelectInput
+                  options={roleOptions}
+                  control={methods.control}
+                  handleChange={handleRoleChange}
+                  label="role"
+                  title="Select Role...."
+                /> */}
               </div>
 
               <div className="flex flex-col gap-1">
@@ -123,6 +171,7 @@ const SignUpPage = () => {
 
               <Button
                 type="submit"
+                loading={isLoading}
                 disabled={
                   methods.formState.isSubmitting || !methods.formState.isValid
                 }

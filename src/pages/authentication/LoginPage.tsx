@@ -5,11 +5,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import PasswordInput from "@/components/input/PasswordInput";
 import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { postLogin } from "@/redux/features/loginSlice";
+import toast from "react-hot-toast";
+import { RootState } from "@/redux/root";
 
 const passwordSchema = z.string().min(7, { message: "At least 7 characters" });
 
 const LoginSchema = z.object({
-  username: z.string().email({ message: "Invalid email address" }),
+  username: z
+    .string()
+    .min(2, { message: "At least 2 characters." })
+    .max(30, { message: "At most 30 characters." }),
   password: passwordSchema,
 });
 
@@ -22,8 +30,33 @@ const LoginPage = () => {
     mode: "onChange",
   });
 
-  const onSubmit: SubmitHandler<LoginFormValues> = (data) => {
-    console.log(data);
+  const isLoading = useSelector((state: RootState) => state?.login?.loading);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const onSubmit: SubmitHandler<LoginFormValues> = (loginValues) => {
+    const loginData = {
+      username: loginValues.username,
+      password: loginValues.password,
+    };
+
+    console.log({ loginData });
+
+    dispatch(postLogin(loginData))
+      .then((result) => {
+        console.log({ result });
+        const { payload } = result;
+        console.log({ payload });
+        const success: boolean = Boolean(payload?.success);
+        if (success) {
+          navigate("/layout/dashboard");
+          toast.success("Login Successful");
+        } else {
+          toast.error(payload);
+        }
+      })
+      .catch((error) => {
+        toast.error("Login error: " + error.message);
+      });
   };
 
   const handleForgotPassword = () => {
@@ -33,6 +66,9 @@ const LoginPage = () => {
   const handleSignUp = () => {
     navigate("/signUp");
   };
+
+  // console.log("Form Errors:", methods.formState.errors);
+  // console.log("Form Values:", methods.getValues());
 
   return (
     <div className="w-screen h-screen bg-primary bg-opacity-[12%]">
@@ -79,6 +115,7 @@ const LoginPage = () => {
 
               <Button
                 type="submit"
+                loading={isLoading}
                 disabled={
                   methods.formState.isSubmitting || !methods.formState.isValid
                 }

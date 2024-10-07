@@ -1,7 +1,7 @@
 import React from "react";
-import { useFormContext, FieldError } from "react-hook-form";
-import Select, { StylesConfig } from "react-select";
-import { motion } from "framer-motion";
+import Select, { SingleValue, StylesConfig } from "react-select";
+import { startCase } from "lodash";
+import { Controller, Control } from "react-hook-form";
 
 interface OptionType {
   value: string;
@@ -9,69 +9,71 @@ interface OptionType {
 }
 
 interface SelectInputProps {
-  name: string;
-  label: string;
   options: OptionType[];
-  error?: FieldError;
-  placeholder?: string;
+  handleChange?: (data: OptionType | null) => void;
+  control: Control;
+  label: string;
+  title?: string;
 }
 
+const colorStyles: StylesConfig<OptionType, false> = {
+  control: (styles) => ({
+    ...styles,
+    backgroundColor: "#FFFFFF",
+    fontSize: "14px",
+  }),
+  option: (styles) => ({
+    ...styles,
+  }),
+};
+
 const SelectInput: React.FC<SelectInputProps> = ({
-  name,
-  label,
   options,
-  error,
-  placeholder,
+  handleChange = () => null,
+  control,
+  label,
+  title = "",
 }) => {
-  const { setValue, getValues, formState } = useFormContext();
-  const isError = Boolean(error);
-  const isSuccess = formState.isSubmitted && !isError;
-
-  const customStyles: StylesConfig<OptionType, false> = {
-    control: (provided, state) => ({
-      ...provided,
-      borderColor: isError
-        ? "red"
-        : isSuccess
-        ? "green"
-        : state.isFocused
-        ? "#888888"
-        : "#E6E6E6",
-      boxShadow: state.isFocused ? "0 0 0 1px #007BFF" : "none",
-      "&:hover": {
-        borderColor: isError ? "red" : isSuccess ? "green" : "",
-      },
-    }),
-  };
-
-  const handleChange = (selectedOption: OptionType | null) => {
-    setValue(name, selectedOption ? selectedOption.value : "");
-  };
-
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-1">
       <label
-        htmlFor={name}
+        htmlFor={label}
         className="text-gray-700 text-[12px] font-semibold mb-1"
       >
-        {label}
+        <div>{title ? startCase(title) : startCase(label)}</div>
       </label>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="w-full"
-      >
-        <Select
-          id={name}
-          options={options}
-          styles={customStyles}
-          placeholder={placeholder}
-          onChange={handleChange}
-          value={options.find((option) => option.value === getValues(name))}
-          className="rounded-[6px] w-full z-50"
-        />
-      </motion.div>
-      {error && <p className="text-red-500 text-xs mt-1">{error.message}</p>}
+      <Controller
+        name={label}
+        control={control}
+        render={({ field }) => {
+          console.log("Current Field Value:", field.value); // Debugging log
+          return (
+            <Select
+              {...field}
+              options={options}
+              onChange={(selected: SingleValue<OptionType>) => {
+                field.onChange(selected);
+                handleChange(selected); // Call the external change handler
+              }}
+              styles={colorStyles}
+              isClearable
+              isSearchable
+              closeMenuOnSelect
+              blurInputOnSelect
+              value={field.value as SingleValue<OptionType> | null} // Ensure the value is typed correctly
+              theme={(theme) => ({
+                ...theme,
+                borderRadius: 5,
+                colors: {
+                  ...theme.colors,
+                  primary25: "#76b1ef",
+                  primary: "#007BFF",
+                },
+              })}
+            />
+          );
+        }}
+      />
     </div>
   );
 };

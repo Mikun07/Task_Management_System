@@ -5,6 +5,7 @@ const ForgotPasswordPage = lazy(
   () => import("@/pages/authentication/ForgotPasswordPage")
 );
 const SignUpPage = lazy(() => import("@/pages/authentication/SignUpPage"));
+const DashboardPage = lazy(() => import("@/pages/Dashboard/LandingPage"));
 
 const routes = {
   landing: {
@@ -19,24 +20,30 @@ const routes = {
     pageName: "Login Page",
   },
 
-  ForgotPassword: {
+  forgotPassword: {
     link: "/forgotPassword",
     element: <ForgotPasswordPage />,
     pageName: "Forgot Password Page",
   },
 
-  SignUp: {
+  signUp: {
     link: "/signUp",
     element: <SignUpPage />,
     pageName: "SignUp Page",
+  },
+
+  dashboard: {
+    link: "/layout/dashboard",
+    element: <DashboardPage />,
+    pageName: "Dashboard",
   },
 };
 
 export const PUBLIC_ROUTES = [
   routes.landing,
   routes.login,
-  routes.ForgotPassword,
-  routes.SignUp,
+  routes.forgotPassword,
+  routes.signUp,
 ];
 
-export const PRIVATE_ROUTES = [];
+export const PRIVATE_ROUTES = [routes.dashboard];
