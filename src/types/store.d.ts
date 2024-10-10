@@ -1,6 +1,6 @@
 declare const store: import("@reduxjs/toolkit").EnhancedStore<{
-    signUp: import("immer").WritableDraft<import("./root").BaseState>;
-    login: import("immer").WritableDraft<import("./root").LoginState>;
+    signUp: import("immer").WritableDraft<import("../redux/root").BaseState>;
+    login: import("immer").WritableDraft<import("../redux/root").LoginState>;
     getUser: {
         data: any;
         success: boolean;
@@ -15,8 +15,8 @@ declare const store: import("@reduxjs/toolkit").EnhancedStore<{
     };
 }, import("redux").UnknownAction, import("@reduxjs/toolkit").Tuple<[import("redux").StoreEnhancer<{
     dispatch: import("redux-thunk").ThunkDispatch<{
-        signUp: import("immer").WritableDraft<import("./root").BaseState>;
-        login: import("immer").WritableDraft<import("./root").LoginState>;
+        signUp: import("immer").WritableDraft<import("../redux/root").BaseState>;
+        login: import("immer").WritableDraft<import("../redux/root").LoginState>;
         getUser: {
             data: any;
             success: boolean;

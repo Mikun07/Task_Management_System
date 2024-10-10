@@ -1,4 +1,4 @@
-import { BaseState } from "../root";
+import { BaseState } from "../redux/root";
 interface SignUpPayload {
     email: string;
     username: string;

@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
+import App from "./types/App";
 import axiosInstance, { useInterceptor } from "./redux/axios";
 import { Provider } from "react-redux";
 import store from "./redux/store";

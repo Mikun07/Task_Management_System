@@ -1,4 +1,4 @@
-import { LoginState } from "../root";
+import { LoginState } from "../redux/root";
 interface loginPayload {
     username: string;
     password: string;

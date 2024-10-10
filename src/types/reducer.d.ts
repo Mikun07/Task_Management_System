@@ -1,6 +1,6 @@
 declare const rootReducer: import("redux").Reducer<{
-    signUp: import("immer").WritableDraft<import("./root").BaseState>;
-    login: import("immer").WritableDraft<import("./root").LoginState>;
+    signUp: import("immer").WritableDraft<import("../redux/root").BaseState>;
+    login: import("immer").WritableDraft<import("../redux/root").LoginState>;
     getUser: {
         data: any;
         success: boolean;
@@ -14,8 +14,8 @@ declare const rootReducer: import("redux").Reducer<{
         loading: boolean;
     };
 }, import("redux").UnknownAction, Partial<{
-    signUp: import("immer").WritableDraft<import("./root").BaseState>;
-    login: import("immer").WritableDraft<import("./root").LoginState>;
+    signUp: import("immer").WritableDraft<import("../redux/root").BaseState>;
+    login: import("immer").WritableDraft<import("../redux/root").LoginState>;
     getUser: {
         data: any;
         success: boolean;
