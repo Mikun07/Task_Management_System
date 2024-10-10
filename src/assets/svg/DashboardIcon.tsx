@@ -1,32 +1,16 @@
 import React from "react";
-import { useGrayScale, useWhiteScale } from "@/hooks/useScale";
 
 interface DashboardIconProps {
   size?: string;
-  isGrayScale?: boolean;
-  isWhiteScale?: boolean;
+  color?: string;
   className?: string;
 }
 
 const DashboardIcon: React.FC<DashboardIconProps> = ({
   size = "60",
-  isGrayScale = false,
-  isWhiteScale = false,
+  color = "#000000",
   className = "",
 }) => {
-  const originalColors = {
-    fill: "#000",
-  };
-
-  const grayScaledColors = useGrayScale(originalColors);
-  const whiteScaledColors = useWhiteScale(originalColors);
-
-  const colors = isGrayScale
-    ? grayScaledColors
-    : isWhiteScale
-    ? whiteScaledColors
-    : originalColors;
-
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -34,11 +18,11 @@ const DashboardIcon: React.FC<DashboardIconProps> = ({
       width={size}
       height={size}
       fill="none"
-      viewBox="0 0 18 24"
+      viewBox="0 0 24 24"
       className={className}
     >
       <path
-        fill={colors.fill}
+        fill={color}
         d="M10 6V0h8v6h-8ZM0 10V0h8v10H0Zm10 8V8h8v10h-8ZM0 18v-6h8v6H0Z"
       />
     </svg>

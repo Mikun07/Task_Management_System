@@ -46,7 +46,6 @@ const SelectInput: React.FC<SelectInputProps> = ({
         name={label}
         control={control}
         render={({ field }) => {
-          console.log("Current Field Value:", field.value); // Debugging log
           return (
             <Select
               {...field}

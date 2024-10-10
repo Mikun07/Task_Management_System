@@ -13,4 +13,5 @@ export type RootState = {
   login: LoginState;
   signUp: BaseState;
   getUser: BaseState;
+  createTask: BaseState;
 };

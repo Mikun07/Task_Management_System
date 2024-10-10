@@ -1,16 +1,66 @@
 {
-    "Roles": [
-        {
-            "value": "Admin",
-            "label": "Admin"
-          },
-          {
-            "value": "Team Leader",
-            "label": "Team Leader"
-          },
-          {
-            "value": "Team Member",
-            "label": "Team Member"
-          }
-    ]
+  "Roles": [
+    {
+      "value": "Admin",
+      "label": "Admin"
+    },
+    {
+      "value": "Team Leader",
+      "label": "Team Leader"
+    },
+    {
+      "value": "Team Member",
+      "label": "Team Member"
+    }
+  ],
+  "Priority": [
+    {
+      "value": "High",
+      "label": "High"
+    },
+    {
+      "value": "Medium",
+      "label": "Medium"
+    },
+    {
+      "value": "Low",
+      "label": "Low"
+    }
+  ],
+  "Status": [
+    {
+      "value": "To Do",
+      "label": "To Do"
+    },
+    {
+      "value": "In Progress",
+      "label": "In Progress"
+    },
+    {
+      "value": "Blocked",
+      "label": "Blocked"
+    },
+    {
+      "value": "Completed",
+      "label": "Completed"
+    }
+  ],
+  "Users": [
+    {
+      "value": "1",
+      "label": "Festus-Olaleye Ayomikun Oluwsemilore"
+    },
+    {
+      "value": "2",
+      "label": "Laith Darwish"
+    },
+    {
+      "value": "3",
+      "label": "Azqa Fareed"
+    },
+    {
+      "value": "4",
+      "label": "Akinrujomu Oluwatobiloba Samuel"
+    }
+  ]
 }
