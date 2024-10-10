@@ -70,7 +70,7 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
         <div
           className={`flex justify-between items-center p-2 rounded-md sticky top-1 z-10 ${bgColor}`}
         >
-          <h2 className="flex capitalize font-semibold ">{title}</h2>
+          <p className="flex capitalize font-semibold ">{title}</p>
           <span className="cursor-pointer">
             <BsThreeDots size={30} />
           </span>

@@ -17,7 +17,7 @@ interface UserData {
 
 interface HeaderProps {
   pageName: string;
-  data: UserData | null; // Allow data to be null
+  data: UserData | null; 
   isLoading: boolean;
 }
 

@@ -26,7 +26,7 @@ const TaskCard: React.FC<TaskCardProps> = React.memo(
               <span key={index}>{icon}</span>
             ))}
           </div>
-          <div className="h-7 w-7 bg-primary text-white rounded-full flex items-center justify-center text-sm text">
+          <div className="h-6 w-6 bg-primary text-white rounded-full flex items-center justify-center text-sm text">
             <p className="font-medium">{assignee}</p>
           </div>
         </div>
