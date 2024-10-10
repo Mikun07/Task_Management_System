@@ -25,12 +25,14 @@ export const postSignUp = createAsyncThunk(
   async (body: SignUpPayload) => {
     try {
       const response = await axios.post(`${BASE_URL}/auth/`, body, {
-        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-      console.log({ response });
       return response;
     } catch (error) {
       console.log({ error });
+      return error;
     }
   }
 );
@@ -50,22 +52,21 @@ const signUpSlice = createSlice({
     });
     builder.addCase(postSignUp.fulfilled, (state, action) => {
       const { payload } = action;
-      if (payload?.data?.errors) {
+      if (payload?.status === 201) {
+        state.success = true;
+        state.data = payload.data;
+        state.error = null;
+      } else {
         state.success = false;
         state.data = null;
-        state.error = payload?.data?.errors;
-      } else {
-        localStorage.setItem("userToken", JSON.stringify(payload?.data?.token));
-        state.success = true;
-        state.data = payload?.data?.user;
-        state.error = null;
+        state.error = payload?.message || "Sign-up failed";
       }
       state.loading = false;
     });
     builder.addCase(postSignUp.rejected, (state, action) => {
       state.success = false;
       state.loading = false;
-      state.error = action?.error?.message || "Could not sign up";
+      state.error = action?.error?.message || "Sign-up failed";
     });
   },
 });

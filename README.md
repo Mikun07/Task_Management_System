@@ -5,7 +5,7 @@ Table of Contents
     1. Project Aim and Objectives
     2. Technologies Used
     3.Features
-        - Admin
+        - Project Owner
         - Team Leader
         - Team Members
     4.Getting Started
@@ -30,7 +30,7 @@ Technologies Used
     Tailwind CSS: Utility-first CSS framework for rapid UI development.
 
 Features
-    Admin:
+    Project Owner:
         Create and manage Team Leader and Team Member accounts.
         Configure user permissions to assign roles (Team Leader or Team Member).
         Manage system settings such as task priority levels, project settings, and notifications.
@@ -69,7 +69,7 @@ Folder Structure
     │
     ├── public/                   # Static files
     ├── src/                      # Application source code
-    │   ├── assets/               # Images, icons, etc.
+    │   ├── assets/               # Images, icons, svg, etc.
     │   ├── components/           # Reusable components
     │   ├── pages/                # Page components
     │   ├── services/             # API services
@@ -91,6 +91,3 @@ Contributing
         Open a pull request.
 License
 This project is licensed under the MIT License. See the LICENSE file for details. -->
-
-
- 

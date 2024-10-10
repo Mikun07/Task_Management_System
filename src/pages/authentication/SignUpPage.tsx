@@ -83,16 +83,16 @@ const SignUpPage = () => {
     dispatch(postSignUp(signUpData))
       .then((result) => {
         const { payload } = result;
-        console.log({ payload });
-        const success: boolean = Boolean(payload);
+        const success: boolean = Boolean(payload?.status === 201);
         if (success) {
           navigate("/login");
+          toast.success(payload?.data?.message);
         } else {
-          toast.error("Sign-up failed. Please try again.");
+          toast.error("Sign-up failed.");
         }
       })
-      .catch((error) => {
-        toast.error("Sign-up error: " + error.message);
+      .catch(() => {
+        toast.error("An error occurred during sign-up.");
       });
   };
 

@@ -3,7 +3,6 @@ import { userToken } from "@/config/auth";
 import axios, { AxiosInstance } from "axios";
 import { EnhancedStore } from "@reduxjs/toolkit";
 
-
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -27,14 +26,11 @@ export const useInterceptor = (
     async (error) => {
       const originalRequest = error?.config;
       const errorResponse = error?.response.status;
-      if (errorResponse && errorResponse === 401 && !originalRequest._retry) {
+      if (errorResponse && errorResponse === 403 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
-          // const userType = JSON.parse(localStorage.getItem("userType"));
-          // localStorage.removeItem("userToken");
-          // localStorage.removeItem("userType");
-          // const isAdminOrNumericUser = userType === "1" || userType === "2" || Number(userType) === 1;
-          // location.assign(isAdminOrNumericUser ? "/login/admin" : "/login");
+          localStorage.removeItem("userToken");
+          location.assign("/login");
         } catch (error) {
           return Promise.reject(error);
         }

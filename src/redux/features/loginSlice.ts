@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../config/api";
 import { LoginState } from "../root";
 
@@ -17,18 +17,29 @@ const initialState: LoginState = {
 };
 
 export const postLogin = createAsyncThunk(
-  "login/postSignUp",
-  async (body: loginPayload) => {
+  "login/postLogin",
+  async (body: loginPayload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/auth/token`, body, {
-        withCredentials: true,
+      const params = new URLSearchParams();
+      params.append("username", body.username);
+      params.append("password", body.password);
+
+      const response = await axios.post(`${BASE_URL}/auth/token`, params, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
       });
-      console.log({ response });
-      return response?.data;
-    } catch (error) {
-      console.log({ error });
-    //   console.log(error?.message);
-      return error?.message
+
+      // Return only serializable parts of the response
+      const { data, status } = response;
+      return { data, status };
+    } catch (error: unknown) {
+      // Check if the error is an AxiosError to provide proper typing
+      if (error instanceof AxiosError) {
+        return rejectWithValue(error.response?.data || { message: "Login failed" });
+      }
+      // If the error is not AxiosError, reject with a generic message
+      return rejectWithValue({ message: "An unknown error occurred" });
     }
   }
 );
@@ -50,15 +61,18 @@ const loginSlice = createSlice({
     });
     builder.addCase(postLogin.fulfilled, (state, action) => {
       const { payload } = action;
-      if (payload?.data?.errors) {
+      if (payload?.status === 200) {
+        localStorage.setItem(
+          "userToken",
+          JSON.stringify(payload?.data?.access_token)
+        );
+        state.success = true;
+        state.data = payload?.data;
+        state.error = null;
+      } else {
         state.success = false;
         state.data = null;
-        state.error = payload?.data?.errors;
-      } else {
-        localStorage.setItem("userToken", JSON.stringify(payload?.data?.token));
-        state.success = true;
-        state.data = payload?.data?.user;
-        state.error = null;
+        state.error = payload.data;
       }
       state.loading = false;
     });

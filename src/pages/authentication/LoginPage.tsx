@@ -10,6 +10,20 @@ import { AppDispatch } from "@/redux/store";
 import { postLogin } from "@/redux/features/loginSlice";
 import toast from "react-hot-toast";
 import { RootState } from "@/redux/root";
+import { PayloadAction } from "@reduxjs/toolkit";
+
+interface loginPayload {
+  username: string;
+  password: string;
+}
+
+interface LoginResponse {
+  access_token: string;
+  token_type: string;
+  status: number;
+  message?: string;
+  detail?: string;
+}
 
 const passwordSchema = z.string().min(7, { message: "At least 7 characters" });
 
@@ -39,23 +53,28 @@ const LoginPage = () => {
       password: loginValues.password,
     };
 
-    console.log({ loginData });
-
     dispatch(postLogin(loginData))
       .then((result) => {
-        console.log({ result });
-        const { payload } = result;
-        console.log({ payload });
-        const success: boolean = Boolean(payload?.success);
+        const { payload } = result as PayloadAction<
+          { data: LoginResponse; status: number },
+          string,
+          { arg: loginPayload; requestId: string; requestStatus: "fulfilled" },
+          never
+        >;
+        const success: boolean = payload?.status === 200;
         if (success) {
           navigate("/layout/dashboard");
           toast.success("Login Successful");
         } else {
-          toast.error(payload);
+          const errorMessage =
+            payload?.data?.detail ||
+            payload?.data?.message ||
+            "Invalid username or password";
+          toast.error(errorMessage);
         }
       })
       .catch((error) => {
-        toast.error("Login error: " + error.message);
+        toast.error("Login error: " + (error as Error).message);
       });
   };
 
