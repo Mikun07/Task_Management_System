@@ -13,13 +13,14 @@ import { GrTextAlignFull } from "react-icons/gr";
 import { MdAttachment } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Users } from "@/data/data.json";
+import EditTaskForm from "@/components/forms/EditTaskForm";
 
 interface Task {
   id: number;
   title: string;
   priority: string;
   status: string;
-  assigned_to: number;
+  assigned_to: string;
   created_at: string;
   deadline: string;
   description: string;
@@ -52,7 +53,7 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
-const getUserLabel = (id: number) => {
+const getUserLabel = (id: string) => {
   const user = Users.find((user) => user.value === String(id));
   return user
     ? `${user?.lastname?.charAt(0)}${user?.firstname?.charAt(0)}`
@@ -62,8 +63,16 @@ const getUserLabel = (id: number) => {
 const TaskColumn: React.FC<TaskColumnProps> = React.memo(
   ({ title, bgColor, tasks }) => {
     const [modalOpen, setModalOpen] = useState(false);
+    const [modalEdit, setModalEdit] = useState(false);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
     const toggleModal = () => setModalOpen(!modalOpen);
+    const toggleEditModal = () => setModalEdit(!modalEdit);
+
+    const handleEditClick = (task: Task) => {
+      setSelectedTask(task); // Set the selected task
+      toggleEditModal(); // Open the edit modal
+    };
 
     return (
       <div className="bg-white h-[500px] w-[300px] rounded-md p-2 overflow-y-auto custom__scrollbar">
@@ -85,7 +94,9 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
                   {task.priority}
                 </span>
               }
-              mainIcon={<BsThreeDots size={20} />}
+              mainIcon={
+                <BsThreeDots size={20} onClick={() => handleEditClick(task)} />
+              }
               actionIcons={[
                 <GrTextAlignFull size={20} key="1" />,
                 <FaRegComment size={20} key="2" />,
@@ -94,6 +105,19 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
               assignee={getUserLabel(task.assigned_to)}
             />
           ))}
+          <Modal isOpen={modalEdit} onClose={toggleEditModal}>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl font-semibold">Edit task</h2>
+              <button
+                className="bg-primary text-white py-2 px-4 rounded"
+                onClick={toggleEditModal}
+              >
+                Close
+              </button>
+            </div>
+
+            {selectedTask && <EditTaskForm task={selectedTask} />}
+          </Modal>
         </div>
 
         <div className="border mt-3 rounded-md">
@@ -104,7 +128,7 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
           />
           <Modal isOpen={modalOpen} onClose={toggleModal}>
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-xl font-semibold">Board Templates</h2>
+              <h2 className="text-xl font-semibold">Create Task</h2>
               <button
                 className="bg-primary text-white py-2 px-4 rounded"
                 onClick={toggleModal}

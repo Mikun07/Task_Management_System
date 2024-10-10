@@ -7,10 +7,8 @@ interface Task {
   priority: string;
   status: string;
   assigned_to: string;
-  created_at: string;
   deadline: string;
   description: string;
-  owner_id: number;
 }
 
 interface TaskState {
@@ -27,32 +25,32 @@ const initialState: TaskState = {
   loading: false,
 };
 
-export const fetchTask = createAsyncThunk("task/fetchTask", async () => {
+export const updateTask = createAsyncThunk("task/updateTask", async (body: Task) => {
   try {
-    const response = await axiosInstance.get("/tasks/");
+    const response = await axiosInstance.post(`/tasks/?task_id=${body?.id}`);
     return response?.data;
   } catch (error) {
     return error?.response?.data?.error;
   }
 });
 
-const getTaskSlice = createSlice({
-  name: "task",
+const editTaskSlice = createSlice({
+  name: "editTask",
   initialState,
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(fetchTask.pending, (state) => {
+      .addCase(updateTask.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchTask.fulfilled, (state, action) => {
+      .addCase(updateTask.fulfilled, (state, action) => {
         const tasks = action.payload as Task[];
         state.success = true;
         state.data = tasks;
         state.error = null;
         state.loading = false;
       })
-      .addCase(fetchTask.rejected, (state) => {
+      .addCase(updateTask.rejected, (state) => {
         state.loading = false;
         state.success = false;
         state.error = "Could not fetch Task";
@@ -60,4 +58,4 @@ const getTaskSlice = createSlice({
   },
 });
 
-export default getTaskSlice;
+export default editTaskSlice;

@@ -15,4 +15,5 @@ export type RootState = {
   getUser: BaseState;
   createTask: BaseState;
   getTask: BaseState;
+  editTask: BaseState;
 };
