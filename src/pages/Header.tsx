@@ -17,7 +17,7 @@ interface UserData {
 
 interface HeaderProps {
   pageName: string;
-  data: UserData;
+  data: UserData | null; // Allow data to be null
   isLoading: boolean;
 }
 
@@ -34,11 +34,15 @@ const Header: React.FC<HeaderProps> = ({ pageName, data, isLoading }) => {
         {pageName}
       </p>
 
-      <AvatarButton
-        data={data}
-        loading={isLoading}
-        signOut={() => handleSignOut()}
-      />
+      {isLoading ? (
+        <span className="loader" /> // Placeholder for loading state
+      ) : (
+        <AvatarButton
+          data={data} // This can be null; handle it inside AvatarButton
+          loading={isLoading}
+          signOut={handleSignOut}
+        />
+      )}
     </div>
   );
 };

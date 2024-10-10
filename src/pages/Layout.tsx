@@ -11,6 +11,7 @@ import { AppDispatch } from "@/redux/store";
 const Layout = () => {
   const pageName = usePageName();
   const dispatch = useDispatch<AppDispatch>();
+
   useEffect(() => {
     dispatch(fetchUser());
   }, [dispatch]);
@@ -18,20 +19,22 @@ const Layout = () => {
   const { data: user, loading: isLoading } = useSelector(
     (state: RootState) => state?.getUser
   );
+
   return (
-    <>
-      <div className="flex overflow-hidden w-full h-screen">
-        <Sidebar />
-        <div className="flex flex-col w-full overflow-hidden">
-          <div>
-            <Header pageName={pageName} data={user} isLoading={isLoading} />
-          </div>
-          <div className="overflow-hidden h-screen p-3 bg-primary bg-opacity-[12%]">
-            <Outlet />
-          </div>
+    <div className="flex overflow-hidden w-full h-screen">
+      <Sidebar />
+      <div className="flex flex-col w-full overflow-hidden">
+        <Header
+          pageName={pageName}
+          // @ts-ignore
+          data={user || null} // Pass user directly, or null if not available
+          isLoading={isLoading}
+        />
+        <div className="overflow-hidden h-screen p-3 bg-primary bg-opacity-[12%]">
+          <Outlet />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
