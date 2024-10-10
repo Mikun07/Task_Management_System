@@ -31,7 +31,7 @@ const AvatarButton = ({
   return (
     <div className="relative">
       {loading ? (
-        <div className="w-9 h-9 rounded-full shadow-md justify-center animate-pulse bg-primaryDark bg-opacity-[8%]"></div>
+        <div className="w-9 h-9 z-20 rounded-full shadow-md justify-center animate-pulse bg-primaryDark bg-opacity-[8%]"></div>
       ) : (
         <div
           onClick={handleButtonClick}

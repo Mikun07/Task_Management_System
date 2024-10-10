@@ -48,19 +48,27 @@
   "Users": [
     {
       "value": "1",
-      "label": "Festus-Olaleye Ayomikun Oluwsemilore"
+      "label": "Festus-Olaleye Ayomikun Oluwsemilore",
+      "firstname": "Ayomikun",
+      "lastname": "Festus-Olaleye"
     },
     {
       "value": "2",
-      "label": "Laith Darwish"
+      "label": "Laith Darwish",
+      "firstname": "Laith",
+      "lastname": "Darwish"
     },
     {
       "value": "3",
-      "label": "Azqa Fareed"
+      "label": "Azqa Fareed",
+      "firstname": "Azqa",
+      "lastname": "Fareed"
     },
     {
       "value": "4",
-      "label": "Akinrujomu Oluwatobiloba Samuel"
+      "label": "Akinrujomu Oluwatobiloba Samuel",
+      "firstname": "Oluwatobiloba",
+      "lastname": "Akinrujomu"
     }
   ]
 }
