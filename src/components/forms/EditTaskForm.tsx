@@ -132,7 +132,7 @@ const EditTaskForm = ({ task }: { task: Task }) => {
     dispatch(updateTask(editTaskData))
       .then((result) => {
         const { payload } = result;
-        const success: boolean = Boolean(payload?.status === 201);
+        const success: boolean = Boolean(payload?.status === 204);
         console.log(success);
         if (success) {
           toast.success("Task edited");

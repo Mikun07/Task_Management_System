@@ -27,8 +27,8 @@ const initialState: TaskState = {
 
 export const updateTask = createAsyncThunk("task/updateTask", async (body: Task) => {
   try {
-    const response = await axiosInstance.post(`/tasks/?task_id=${body?.id}`);
-    return response?.data;
+    const response = await axiosInstance.put(`/tasks/${body?.id}`, body);
+    return response;
   } catch (error) {
     return error?.response?.data?.error;
   }
@@ -44,10 +44,16 @@ const editTaskSlice = createSlice({
         state.loading = true;
       })
       .addCase(updateTask.fulfilled, (state, action) => {
-        const tasks = action.payload as Task[];
-        state.success = true;
-        state.data = tasks;
-        state.error = null;
+        const { payload } = action;
+        if (payload?.status === 204) {
+          state.success = true;
+          state.data = payload?.data;
+          state.error = null;
+        } else {
+          state.success = false;
+          state.data = null;
+          state.error = payload.data;
+        }
         state.loading = false;
       })
       .addCase(updateTask.rejected, (state) => {
