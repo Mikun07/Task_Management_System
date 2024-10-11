@@ -14,6 +14,7 @@ import { MdAttachment } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Users } from "@/data/data.json";
 import EditTaskForm from "@/components/forms/EditTaskForm";
+import PreviewForm from "@/components/forms/PreviewForm";
 
 interface Task {
   id: number;
@@ -64,14 +65,20 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
   ({ title, bgColor, tasks }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalEdit, setModalEdit] = useState(false);
+    const [modalPreview, setModalPreview] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
     const toggleModal = () => setModalOpen(!modalOpen);
     const toggleEditModal = () => setModalEdit(!modalEdit);
+    const togglePreviewModal = () => setModalPreview(!modalPreview);
 
     const handleEditClick = (task: Task) => {
       setSelectedTask(task); // Set the selected task
       toggleEditModal(); // Open the edit modal
+    };
+    const handlePreviewClick = (task: Task) => {
+      setSelectedTask(task); // Set the selected task
+      togglePreviewModal(); // Open the edit modal
     };
 
     return (
@@ -98,7 +105,11 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
                 <BsThreeDots size={20} onClick={() => handleEditClick(task)} />
               }
               actionIcons={[
-                <GrTextAlignFull size={20} key="1" />,
+                <GrTextAlignFull
+                  size={20}
+                  key="1"
+                  onClick={() => handlePreviewClick(task)}
+                />,
                 <FaRegComment size={20} key="2" />,
                 <MdAttachment size={20} key="3" />,
               ]}
@@ -117,6 +128,20 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
             </div>
 
             {selectedTask && <EditTaskForm task={selectedTask} />}
+          </Modal>
+
+          <Modal isOpen={modalPreview} onClose={togglePreviewModal}>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl font-semibold">Preview</h2>
+              <button
+                className="bg-primary text-white py-2 px-4 rounded"
+                onClick={togglePreviewModal}
+              >
+                Close
+              </button>
+            </div>
+
+            {selectedTask && <PreviewForm data={selectedTask} />}
           </Modal>
         </div>
 
@@ -157,7 +182,6 @@ const TaskPage: React.FC = () => {
   );
 
   const taskArray = tasks || [];
-  console.log(taskArray);
 
   if (isLoading) {
     return <div>Loading...</div>;
