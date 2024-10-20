@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
-    "composite": true, // Required when using project references
-    "baseUrl": ".", // Base URL for module resolution
+    "composite": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"] // Path alias
+      "@/*": ["src/*"]
     },
-    "emitDeclarationOnly": true, // Ensures TypeScript only emits declaration files (useful in a monorepo/project references setup)
-    "jsx": "react-jsx", // Add this line for JSX support (use "react-jsx" for React 17+)
-    "esModuleInterop": true, // Enable default imports for CommonJS modules
-    "resolveJsonModule": true, // Enable importing JSON files
-    // "target": "esnext", // Target modern JavaScript
-    // "module": "esnext", // Use ESNext modules to support import.meta
-    // "moduleResolution": "node", // Use Node module resolution strategy
-    // "skipLibCheck": true, // Skip type checking of declaration files
-    // "strict": true // Enable all strict type checking options
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "types": ["cypress", "vite/client"], // Add Cypress and Vite types here
+    "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src", "cypress/**/*.ts"] // Ensure Cypress tests are included
 }

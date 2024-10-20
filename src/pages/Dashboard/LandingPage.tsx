@@ -11,26 +11,26 @@ const LandingPage: React.FC = () => {
   const toggleModal = () => setModalOpen(!modalOpen);
 
   const buttons = [
-    {
-      title: "Create new Board",
-      path: "/create-board",
-      onClick: () => navigate("/create-board"),
-    },
+    // {
+    //   title: "Create new Board",
+    //   path: "/create-board",
+    //   onClick: () => navigate("/create-board"),
+    // },
     {
       title: "Create new Task",
-      path: "/create-task",
+      // path: "/create-task",
       onClick: toggleModal,
     },
-    {
-      title: "Join Board",
-      path: "/join-board",
-      onClick: () => navigate("/join-board"),
-    },
-    {
-      title: "Board Templates",
-      path: "",
-      onClick: () => navigate("/create-task"),
-    },
+    // {
+    //   title: "Join Board",
+    //   path: "/join-board",
+    //   onClick: () => navigate("/join-board"),
+    // },
+    // {
+    //   title: "Board Templates",
+    //   path: "",
+    //   onClick: () => navigate("/create-task"),
+    // },
   ];
 
   return (
