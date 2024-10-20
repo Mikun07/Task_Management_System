@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../axios";
+import { TaskState } from "../root";
 
 interface Task {
   id: number;
@@ -11,13 +12,6 @@ interface Task {
   description: string;
 }
 
-interface TaskState {
-  data: Task[] | null;
-  success: boolean;
-  error: string | null;
-  loading: boolean;
-}
-
 const initialState: TaskState = {
   data: null,
   success: false,
@@ -25,14 +19,17 @@ const initialState: TaskState = {
   loading: false,
 };
 
-export const updateTask = createAsyncThunk("task/updateTask", async (body: Task) => {
-  try {
-    const response = await axiosInstance.put(`/tasks/${body?.id}`, body);
-    return response;
-  } catch (error) {
-    return error?.response?.data?.error;
+export const updateTask = createAsyncThunk(
+  "task/updateTask",
+  async (body: Task) => {
+    try {
+      const response = await axiosInstance.put(`/tasks/${body?.id}`, body);
+      return response;
+    } catch (error) {
+      return error?.response?.data?.error;
+    }
   }
-});
+);
 
 const editTaskSlice = createSlice({
   name: "editTask",

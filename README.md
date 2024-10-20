@@ -72,7 +72,7 @@ Folder Structure
     │   ├── assets/               # Images, icons, svg, etc.
     │   ├── components/           # Reusable components
     │   ├── pages/                # Page components
-    │   ├── services/             # API services
+    │   ├── configs/             # API services
     │   ├── hooks/                # Custom hooks
     │   ├── context/              # Context API for state management
     │   ├── utils/                # Utility functions

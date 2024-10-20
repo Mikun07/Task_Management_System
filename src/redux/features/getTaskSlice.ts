@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../axios";
+import { TaskState } from "../root";
 
 interface Task {
   id: number;
@@ -11,13 +12,6 @@ interface Task {
   deadline: string;
   description: string;
   owner_id: number;
-}
-
-interface TaskState {
-  data: Task[] | null;
-  success: boolean;
-  error: string | null;
-  loading: boolean;
 }
 
 const initialState: TaskState = {

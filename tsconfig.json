@@ -11,7 +11,7 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
-    "types": ["cypress", "vite/client"], // Add Cypress and Vite types here
+    "types": ["cypress", "vite/client", "node"], // Add Node types here
     "skipLibCheck": true
   },
   "include": ["src", "cypress/**/*.ts"] // Ensure Cypress tests are included

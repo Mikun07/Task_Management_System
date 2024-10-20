@@ -4,7 +4,7 @@ export function debounce<T extends unknown[]>(
   func: CallbackFunction<T>,
   delay: number
 ): (...args: T) => void {
-  let timeoutId: NodeJS.Timeout;
+  let timeoutId: ReturnType<typeof setTimeout>;
   return (...args: T) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => func(...args), delay);
