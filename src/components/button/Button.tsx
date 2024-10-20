@@ -8,7 +8,7 @@ interface ButtonProps {
   type?: "button" | "submit" | "reset";
   icon?: React.ReactNode;
   disabled?: boolean;
-  loading?: boolean; 
+  loading?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
 }
