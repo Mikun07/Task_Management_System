@@ -29,6 +29,7 @@ export type RootState = {
   login: LoginState;
   signUp: BaseState;
   getUser: BaseState;
+  getAllUser: BaseState;
   createTask: BaseState;
   getTask: BaseState;
   editTask: BaseState;

@@ -1,10 +1,15 @@
 import DashboardIcon from "@/assets/svg/DashboardIcon";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import classNames from "classnames";
 import { motion } from "framer-motion";
 import TaskIcon from "@/assets/svg/TaskIcon";
-import ReportIcon from "@/assets/svg/ReportIcon";
+// import ReportIcon from "@/assets/svg/ReportIcon";
+import TeamIcon from "@/assets/svg/TeamIcon";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { fetchUser } from "@/redux/features/getUserSlice";
+import { RootState } from "@/redux/root";
 
 interface MenuItem {
   url: string;
@@ -15,6 +20,15 @@ interface MenuItem {
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
+
+  const { data: user, loading: isLoading } = useSelector(
+    (state: RootState) => state?.getUser
+  );
 
   const isMenuActive = (menuUrl: string) => location.pathname === menuUrl;
 
@@ -32,17 +46,18 @@ const Sidebar: React.FC = () => {
       tooltip: "Task",
     },
     {
-      url: "/layout/report",
-      icon: <ReportIcon color="#888888" size="25" />,
-      activeIcon: <ReportIcon size="25" />,
-      tooltip: "Report",
+      url: "/layout/user",
+      icon: <TeamIcon color="#888888" size="25" />,
+      activeIcon: <TeamIcon size="25" />,
+      tooltip: "User",
     },
     // {
-    //   url: "",
-    //   icon: "",
-    //   activeIcon: "",
-    //   tooltip: "",
+    //   url: "/layout/report",
+    //   icon: <ReportIcon color="#888888" size="25" />,
+    //   activeIcon: <ReportIcon size="25" />,
+    //   tooltip: "Report",
     // },
+    
   ];
 
   const menuVariants = {
@@ -72,7 +87,7 @@ const Sidebar: React.FC = () => {
                   animate={isActive ? "active" : "inactive"}
                   variants={menuVariants}
                   className={classNames(
-                    "flex px-2 pt-2 bg-primary items-center transition-colors duration-200 ease-in-out relative group cursor-pointer",
+                    "flex px-2 pt-2 bg-primary items-center transition-colors duration-200 ease-in-out relative group cursor-pointer"
                     // {
                     //   "bg-primary shadow bg-opacity-10": isActive,
                     //   "hover:bg-primary": !isActive,
@@ -97,9 +112,6 @@ const Sidebar: React.FC = () => {
                       </span>
                     )}
                   </Link>
-                  {/* <span className="absolute z-20 left-full ml-2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                    {menuItem.tooltip}
-                  </span> */}
                 </motion.div>
               );
             })}

@@ -7,6 +7,7 @@ const ForgotPasswordPage = lazy(
 const SignUpPage = lazy(() => import("@/pages/authentication/SignUpPage"));
 const DashboardPage = lazy(() => import("@/pages/Dashboard/LandingPage"));
 const TaskPage = lazy(() => import("@/pages/Dashboard/TaskPage"));
+const ManageUserPage = lazy(() => import("@/pages/Dashboard/ManageUser"));
 
 const routes = {
   landing: {
@@ -43,6 +44,11 @@ const routes = {
     element: <TaskPage />,
     pageName: "Manage Task",
   },
+  user: {
+    link: "/layout/user",
+    element: <ManageUserPage />,
+    pageName: "Manage User",
+  },
 };
 
 export const PUBLIC_ROUTES = [
@@ -52,4 +58,4 @@ export const PUBLIC_ROUTES = [
   routes?.signUp,
 ];
 
-export const PRIVATE_ROUTES = [routes?.dashboard, routes?.task];
+export const PRIVATE_ROUTES = [routes?.dashboard, routes?.task, routes?.user];

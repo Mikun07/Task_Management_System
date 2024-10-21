@@ -1,18 +1,17 @@
 {
   "compilerOptions": {
-    "composite": true,
+    "declaration": false,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
-    "jsx": "react-jsx",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
-    "types": ["cypress", "vite/client", "node"], // Add Node types here
+    "types": ["cypress", "vite/client", "node"],
     "skipLibCheck": true
   },
-  "include": ["src", "cypress/**/*.ts"] // Ensure Cypress tests are included
+  "include": ["src", "cypress/**/*.ts"]
 }

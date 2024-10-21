@@ -5,11 +5,13 @@ import getUserSlice from "./features/getUserSlice";
 import createTaskSlice from "./features/CreateTaskSlice";
 import getTaskSlice from "./features/getTaskSlice";
 import editTaskSlice from "./features/EditTaskSlice";
+import getAllUserSlice from "./features/getAllUserSlice";
 
 const rootReducer = combineReducers({
   signUp: signUpSlice?.reducer,
   login: loginSlice?.reducer,
   getUser: getUserSlice?.reducer,
+  getAllUser: getAllUserSlice?.reducer,
   createTask: createTaskSlice?.reducer,
   getTask: getTaskSlice?.reducer,
   editTask: editTaskSlice?.reducer,
