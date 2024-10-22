@@ -6,6 +6,7 @@ import getTaskSlice from "./features/getTaskSlice";
 import editTaskSlice from "./features/EditTaskSlice";
 import getAllUserSlice from "./features/getAllUserSlice";
 import deleteTaskSlice from "./features/deleteTaskSlice";
+// @ts-ignore
 import createTaskSlice from "./features/createTaskSlice";
 import inviteUserSlice from "./features/inviteUserSlice";
 
