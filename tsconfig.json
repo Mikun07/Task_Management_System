@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "declaration": false,
-    "baseUrl": "src", // Change this to point to the src folder
+    "baseUrl": "src", // Pointing to 'src' for absolute paths
     "paths": {
-      "@/*": ["*"] // This remains the same to keep the path aliasing working
+      "@/*": ["*"], // General alias for everything under 'src'
+      "@/redux/*": ["redux/*"] // More specific alias for the redux folder
     },
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -12,7 +13,8 @@
     "moduleResolution": "node",
     "types": ["cypress", "vite/client", "node"],
     "skipLibCheck": true,
-    "jsx": "react-jsx" // Add this line for React 17+
+    "jsx": "react-jsx", // For React 17+
+    "allowSyntheticDefaultImports": true // Allows default imports where they are not explicitly declared
   },
-  "include": ["src", "cypress/**/*.ts"]
+  "include": ["src/**/*", "cypress/**/*.ts"] // Ensuring all 'src' files are included in the build
 }
