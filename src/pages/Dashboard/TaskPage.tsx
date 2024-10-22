@@ -25,6 +25,7 @@ import { BASE_URL } from "@/config/api";
 import { userToken } from "@/config/auth";
 import { fetchAllUser } from "@/redux/features/getAllUserSlice";
 import { removeTask } from "@/redux/features/deleteTaskSlice";
+import InviteForm from "@/components/forms/InviteForm";
 
 // Define the User interface
 interface User {
@@ -259,7 +260,9 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
               Close
             </button>
           </div>
-          {selectedTask && <EditTaskForm onClose={toggleEditModal} task={selectedTask} />}
+          {selectedTask && (
+            <EditTaskForm onClose={toggleEditModal} task={selectedTask} />
+          )}
         </Modal>
 
         {/* Preview Task Modal */}
@@ -310,6 +313,7 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
 // Main component for the TaskPage
 const TaskPage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false); // State for add task modal
+  const [modalInvite, setModalInvite] = useState(false); // State for add task modal
   const [taskList, setTaskList] = useState<Task[]>([]); // Initialize with an empty array
 
   const dispatch = useDispatch<AppDispatch>();
@@ -445,11 +449,6 @@ const TaskPage: React.FC = () => {
     const updatedDestinationColumnTasks = [...destinationColumnTasks];
     updatedDestinationColumnTasks.splice(destination.index, 0, updatedTask); // Insert into new column
 
-    // Log the task after moving
-    // console.log(
-    //   `Task after being moved: ID = ${updatedTask.id}, Title = ${updatedTask.title}`
-    // );
-
     // Update the task list in the state, ensuring we update all affected columns
     setTaskList((prevTaskList) => {
       return prevTaskList.map(
@@ -478,29 +477,47 @@ const TaskPage: React.FC = () => {
   };
 
   const toggleModal = () => setModalOpen(!modalOpen);
+  const toggleModalInvite = () => setModalInvite(!modalInvite);
 
   return (
     <>
-      {/* Add Task Button and Modal */}
-      <div className="my-1 rounded-md">
-        <DisplayButton
-          onClick={toggleModal}
-          title="Add Task"
-          image={<AiOutlinePlus />}
-        />
-        <Modal isOpen={modalOpen} onClose={toggleModal}>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-semibold">Create Task</h2>
-            <button
-              className="bg-primary text-white py-2 px-4 rounded"
-              onClick={toggleModal}
-            >
-              Close
-            </button>
-          </div>
+      <div className="flex lg:flex-row flex-col justify-between">
+        <div className="my-1 rounded-md">
+          <DisplayButton
+            onClick={toggleModal}
+            title="Add Task"
+            image={<AiOutlinePlus />}
+          />
+          <Modal isOpen={modalOpen} onClose={toggleModal}>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl font-semibold">Create Task</h2>
+              <button
+                className="bg-primary text-white py-2 px-4 rounded"
+                onClick={toggleModal}
+              >
+                Close
+              </button>
+            </div>
 
-          <CreateTaskForm onClose={toggleModal} />
-        </Modal>
+            <CreateTaskForm onClose={toggleModal} />
+          </Modal>
+        </div>
+
+        <div className="my-1 rounded-md">
+          <DisplayButton
+            onClick={toggleModalInvite}
+            title="Invite"
+            // image={<AiOutlinePlus />}
+          />
+          <Modal isOpen={modalInvite} onClose={toggleModalInvite}>
+            <div className="flex items-center justify-center mb-6">
+              <h1 className="text-primaryGray font-bold ">
+                Invite a Team Member
+              </h1>
+            </div>
+            <InviteForm onClose={toggleModalInvite} />
+          </Modal>
+        </div>
       </div>
 
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>

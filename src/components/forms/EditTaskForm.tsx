@@ -48,6 +48,7 @@ const statusValues = Status.map((status) => status.value) as [
   string,
   ...string[]
 ];
+
 const priorityValues = Priority.map((priority) => priority.value) as [
   string,
   ...string[]

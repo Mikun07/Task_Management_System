@@ -40,4 +40,5 @@ export type RootState = {
   getTask: BaseState;
   editTask: BaseState;
   removeTask: BaseState;
+  sendInvite: BaseState
 };
