@@ -6,7 +6,7 @@ import { z } from "zod";
 import NameInput from "../input/NameInput";
 import TextAreaInput from "../input/TextAreaInput";
 import DateInput from "../input/DateInput";
-import { Status, Priority, Users } from "../../data/data.json";
+import { Status, Priority } from "../../data/data.json";
 import SelectInput from "../input/SelectInput";
 import Button from "../button/Button";
 import { RootState } from "@/redux/root";
@@ -40,7 +40,7 @@ const priorityValues = Priority.map((priority) => priority.value) as [
   ...string[]
 ];
 
-const usersValues = Users.map((users) => users.value) as [string, ...string[]];
+// const usersValues = Users.map((users) => users.value) as [string, ...string[]];
 
 const CreateTaskSchema = z.object({
   title: z
@@ -54,12 +54,12 @@ const CreateTaskSchema = z.object({
   deadline: z.string(),
   priority: z.enum(priorityValues),
   status: z.enum(statusValues),
-  assigned_to: z.enum(usersValues),
+  assigned_to: z.string(),
 });
 
 export type CreateTaskFormValues = z.infer<typeof CreateTaskSchema>;
 
-const CreateTaskForm = ({onClose}) => {
+const CreateTaskForm = ({ onClose }) => {
   const methods = useForm<CreateTaskFormValues>({
     resolver: zodResolver(CreateTaskSchema),
     mode: "onChange",
@@ -138,7 +138,7 @@ const CreateTaskForm = ({onClose}) => {
         if (success) {
           dispatch(fetchTask()); // Fetch tasks after deletion
           toast.success("Task Created");
-          onClose()
+          onClose();
         } else {
           toast.error("Failed, Try again");
         }

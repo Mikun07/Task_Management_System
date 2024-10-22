@@ -113,18 +113,6 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
       toggleDeleteModal();
     };
 
-    // useEffect(() => {
-    //   dispatch(fetchTask());
-    // }, [dispatch]);
-
-    // useEffect(() => {
-    //   const fetchTasks = async () => {
-    //     await dispatch(fetchTask());
-    //   };
-
-    //   fetchTasks();
-    // }, [dispatch]);
-
     const TaskDelete = async (task: Task) => {
       const deleteTaskData: dTask = { id: task.id };
       try {

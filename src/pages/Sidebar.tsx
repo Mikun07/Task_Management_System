@@ -45,12 +45,12 @@ const Sidebar: React.FC = () => {
       activeIcon: <TaskIcon size="25" />,
       tooltip: "Task",
     },
-    {
-      url: "/layout/user",
-      icon: <TeamIcon color="#888888" size="25" />,
-      activeIcon: <TeamIcon size="25" />,
-      tooltip: "User",
-    },
+    // {
+    //   url: "/layout/user",
+    //   icon: <TeamIcon color="#888888" size="25" />,
+    //   activeIcon: <TeamIcon size="25" />,
+    //   tooltip: "User",
+    // },
     // {
     //   url: "/layout/report",
     //   icon: <ReportIcon color="#888888" size="25" />,
