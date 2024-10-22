@@ -39,8 +39,6 @@ const priorityValues = Priority.map((priority) => priority.value) as [
   ...string[]
 ];
 
-// const usersValues = Users.map((users) => users.value) as [string, ...string[]];
-
 const CreateTaskSchema = z.object({
   title: z
     .string()
