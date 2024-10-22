@@ -2,7 +2,6 @@ import { Users } from "@/data/data.json";
 import DisableInput from "../input/DisableInput";
 
 const PreviewForm = ({ data }) => {
-  console.log(data);
 
   const getUserLabel = (id: string) => {
     const user = Users.find((user) => user.value === String(id));

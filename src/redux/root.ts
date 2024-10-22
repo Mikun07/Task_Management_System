@@ -1,6 +1,6 @@
 export interface BaseState {
   success: boolean;
-  data: unknown;
+  data: unknown | [];
   error: string | null;
   loading: boolean;
 }
@@ -9,12 +9,18 @@ export interface LoginState extends BaseState {
   isLoggedIn: boolean;
 }
 
+interface AssignedUser {
+  task_id: number;
+  user_id: number;
+  id: number;
+}
+
 interface Task {
   id: number;
   title: string;
   priority: string;
   status: string;
-  assigned_to: string;
+  assigned_to: AssignedUser[]; // Updated to reflect the array of assigned users
   created_at: string;
   deadline: string;
   description: string;
@@ -33,4 +39,5 @@ export type RootState = {
   createTask: BaseState;
   getTask: BaseState;
   editTask: BaseState;
+  removeTask: BaseState;
 };

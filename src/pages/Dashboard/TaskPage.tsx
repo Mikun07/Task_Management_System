@@ -15,23 +15,34 @@ import EditTaskForm from "@/components/forms/EditTaskForm";
 import PreviewForm from "@/components/forms/PreviewForm";
 import DisplayButton from "@/components/button/DisplayButton";
 import { AiOutlinePlus } from "react-icons/ai";
-import { FaRegComment } from "react-icons/fa";
+// import { FaRegComment } from "react-icons/fa";
 import { GrTextAlignFull } from "react-icons/gr";
-import { MdAttachment } from "react-icons/md";
-import { Users } from "@/data/data.json";
+// import { MdAttachment } from "react-icons/md";
 import CreateTaskForm from "@/components/forms/CreateTaskForm";
 import toast from "react-hot-toast";
 import OptionButton from "@/components/button/OptionButton";
 import { BASE_URL } from "@/config/api";
 import { userToken } from "@/config/auth";
+import { fetchAllUser } from "@/redux/features/getAllUserSlice";
+import { removeTask } from "@/redux/features/deleteTaskSlice";
 
-// Task interface
+// Define the User interface
+interface User {
+  id: number;
+  first_name: string;
+  last_name: string;
+}
+
+interface dTask {
+  id: number;
+}
+
 interface Task {
   id: number;
   title: string;
   priority: string;
   status: string;
-  assigned_to: string;
+  assigned_to: User[]; // Updated to reflect the array of assigned users
   created_at: string;
   deadline: string;
   description: string;
@@ -68,37 +79,97 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
-// Helper function to get user's initials based on their ID
-const getUserLabel = (id: string) => {
-  const user = Users.find((user) => user.value === String(id));
-  return user
-    ? `${user?.lastname?.charAt(0)}${user?.firstname?.charAt(0)}` // Show user's initials
-    : "Unknown User"; // Fallback if no user is found
-};
-
 // TaskColumn component that supports drag-and-drop
 const TaskColumn: React.FC<TaskColumnProps> = React.memo(
   ({ title, bgColor, tasks, columnId }) => {
     const [modalEdit, setModalEdit] = useState(false); // State for edit task modal
     const [modalPreview, setModalPreview] = useState(false); // State for preview modal
+    const [modalDelete, setModalDelete] = useState(false); // State for preview modal
     const [selectedTask, setSelectedTask] = useState<Task | null>(null); // The task selected for editing/previewing
-
+    const dispatch = useDispatch<AppDispatch>();
     // Toggle modal visibility functions
     const toggleEditModal = () => setModalEdit(!modalEdit);
     const togglePreviewModal = () => setModalPreview(!modalPreview);
+    const toggleDeleteModal = () => setModalDelete(!modalDelete);
 
     // Handles the click to edit a task, opens the edit modal
     const handleEditClick = (task: Task) => {
-      console.log("Editing task:", task); // Log the task information
+      // console.log("Editing task:", task); // Log the task information
       setSelectedTask(task); // Store the selected task
       toggleEditModal(); // Open the edit modal
     };
 
     // Handles the click to preview a task, opens the preview modal
     const handlePreviewClick = (task: Task) => {
-      console.log("Previewing task:", task); // Log the task information
+      // console.log("Previewing task:", task); // Log the task information
       setSelectedTask(task);
       togglePreviewModal();
+    };
+
+    const handleDeleteClick = (task: Task) => {
+      // console.log("Deleting task:", task);
+      setSelectedTask(task);
+      toggleDeleteModal();
+    };
+
+    // useEffect(() => {
+    //   dispatch(fetchTask());
+    // }, [dispatch]);
+
+    // useEffect(() => {
+    //   const fetchTasks = async () => {
+    //     await dispatch(fetchTask());
+    //   };
+
+    //   fetchTasks();
+    // }, [dispatch]);
+
+    const TaskDelete = async (task: Task) => {
+      const deleteTaskData: dTask = { id: task.id };
+      try {
+        const result = await dispatch(removeTask(deleteTaskData));
+        const { payload } = result;
+        if (payload?.status === 204) {
+          dispatch(fetchTask()); // Fetch tasks after deletion
+          toast.success("Task Deleted");
+        } else {
+          toast.error(payload?.detail);
+        }
+      } catch (err) {
+        toast.error("Error deleting task:", err); // Log the error
+      }
+    };
+
+    useEffect(() => {
+      dispatch(fetchAllUser());
+    }, [dispatch]);
+
+    const { data: allUser = [] } = useSelector(
+      (state: RootState) => state?.getAllUser || { data: [], loading: false }
+    ) as { data: User[]; loading: boolean };
+
+    const getUserLabels = (
+      assignedUsers: { user_id: number }[],
+      allUsers: User[]
+    ) => {
+      if (!assignedUsers || assignedUsers.length === 0) {
+        return "N/A"; // No users assigned
+      }
+
+      return assignedUsers
+        .map((assignedUser) => {
+          // Find the user in allUser by matching the user_id
+          const user = allUsers.find((u) => u.id === assignedUser.user_id);
+          if (user) {
+            // Get first and last initials from the matched user
+            const firstInitial = user.first_name ? user.first_name[0] : "";
+            const lastInitial = user.last_name ? user.last_name[0] : "";
+            return `${lastInitial}${firstInitial}`;
+          }
+          return ""; // Return empty string if no user found
+        })
+        .filter((initials) => initials) // Filter out empty initials
+        .join(", "); // Join initials with commas if there are multiple users
     };
 
     const columnOptions = [
@@ -123,56 +194,55 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {tasks.map((task, index) => (
-                // Each task is draggable
-                <Draggable
-                  key={task.id}
-                  draggableId={String(task.id)} // Ensure this is unique for each task
-                  index={index}
-                >
-                  {(provided) => {
-                    // Move options definition inside the map function
-                    const options = [
-                      { label: "Edit", onClick: () => handleEditClick(task) },
-                      {
-                        label: "Delete",
-                        onClick: () => console.log("Option 2 clicked"),
-                      },
-                      // Add more options as needed
-                    ];
+              {" "}
+              {tasks.map((task, index) => {
+                return (
+                  <Draggable
+                    key={task.id}
+                    draggableId={String(task.id)}
+                    index={index}
+                  >
+                    {(provided) => {
+                      const options = [
+                        { label: "Edit", onClick: () => handleEditClick(task) },
+                        {
+                          label: "Delete",
+                          onClick: () => handleDeleteClick(task),
+                        },
+                      ];
 
-                    return (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <TaskCard
-                          title={task.title}
-                          subtitle={
-                            <span className={getPriorityColor(task.priority)}>
-                              {task.priority}
-                            </span>
-                          }
-                          mainIcon={
-                            <OptionButton options={options} /> // Now properly placed
-                          }
-                          actionIcons={[
-                            <GrTextAlignFull
-                              size={20}
-                              key="1"
-                              onClick={() => handlePreviewClick(task)}
-                            />,
-                            <FaRegComment size={20} key="2" />,
-                            <MdAttachment size={20} key="3" />,
-                          ]}
-                          assignee={getUserLabel(task.assigned_to)} // Display assignee's initials
-                        />
-                      </div>
-                    );
-                  }}
-                </Draggable>
-              ))}
+                      return (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <TaskCard
+                            title={task.title}
+                            subtitle={
+                              <span className={getPriorityColor(task.priority)}>
+                                {task.priority}
+                              </span>
+                            }
+                            mainIcon={<OptionButton options={options} />}
+                            actionIcons={[
+                              <GrTextAlignFull
+                                size={20}
+                                key="1"
+                                onClick={() => handlePreviewClick(task)}
+                              />,
+                              // <FaRegComment size={20} key="2" />,
+                              // <MdAttachment size={20} key="3" />,
+                            ]}
+                            // @ts-ignore
+                            assignee={getUserLabels(task.assigned, allUser)} // Display assignee's initials
+                          />
+                        </div>
+                      );
+                    }}
+                  </Draggable>
+                );
+              })}
               {provided.placeholder}
             </div>
           )}
@@ -189,7 +259,7 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
               Close
             </button>
           </div>
-          {selectedTask && <EditTaskForm task={selectedTask} />}
+          {selectedTask && <EditTaskForm onClose={toggleEditModal} task={selectedTask} />}
         </Modal>
 
         {/* Preview Task Modal */}
@@ -204,6 +274,33 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
             </button>
           </div>
           {selectedTask && <PreviewForm data={selectedTask} />}
+        </Modal>
+
+        {/* Delete Task Modal */}
+        <Modal isOpen={modalDelete} onClose={toggleDeleteModal}>
+          <div className="flex flex-col gap-14 items-center justify-center">
+            <h2 className="text-xl font-semibold capitalize">are you sure??</h2>
+
+            <div className="flex items-center gap-16">
+              <button
+                className="bg-red-500 text-white py-2 px-4 rounded"
+                onClick={() => {
+                  if (selectedTask) {
+                    TaskDelete(selectedTask); // Pass the selected task to the delete function
+                  }
+                }}
+              >
+                Delete
+              </button>
+              <button
+                className="bg-transparent border-2 border-red-500 text-red-500 py-2 px-4 rounded"
+                onClick={toggleDeleteModal}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+          {/* {selectedTask && <PreviewForm data={selectedTask} />} */}
         </Modal>
       </div>
     );
@@ -402,7 +499,7 @@ const TaskPage: React.FC = () => {
             </button>
           </div>
 
-          <CreateTaskForm />
+          <CreateTaskForm onClose={toggleModal} />
         </Modal>
       </div>
 

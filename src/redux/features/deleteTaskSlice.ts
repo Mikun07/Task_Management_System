@@ -2,22 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../axios";
 import { TaskState } from "../root";
 
-interface User {
+interface dTask {
   id: number;
-  first_name: string;
-  last_name: string;
-}
-
-interface Task {
-  id: number;
-  title: string;
-  priority: string;
-  status: string;
-  assigned_to: string | User[]; // Updated to reflect the array of assigned users
-  created_at: string;
-  deadline: string;
-  description: string;
-  owner_id: number;
 }
 
 const initialState: TaskState = {
@@ -27,28 +13,30 @@ const initialState: TaskState = {
   loading: false,
 };
 
-export const updateTask = createAsyncThunk(
-  "task/updateTask",
-  async (body: Task) => {
+export const removeTask = createAsyncThunk(
+  "task/removeTask",
+  async (body: dTask) => {
     try {
-      const response = await axiosInstance.put(`/tasks/${body?.id}`, body);
+      const response = await axiosInstance.delete(`/tasks/${body?.id}`);
       return response;
     } catch (error) {
-      return error?.response?.data?.error;
+      console.log(error);
+      
+      return error?.response?.data;
     }
   }
 );
 
-const editTaskSlice = createSlice({
-  name: "editTask",
+const deleteTaskSlice = createSlice({
+  name: "removeTask",
   initialState,
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(updateTask.pending, (state) => {
+      .addCase(removeTask.pending, (state) => {
         state.loading = true;
       })
-      .addCase(updateTask.fulfilled, (state, action) => {
+      .addCase(removeTask.fulfilled, (state, action) => {
         const { payload } = action;
         if (payload?.status === 204) {
           state.success = true;
@@ -61,7 +49,7 @@ const editTaskSlice = createSlice({
         }
         state.loading = false;
       })
-      .addCase(updateTask.rejected, (state) => {
+      .addCase(removeTask.rejected, (state) => {
         state.loading = false;
         state.success = false;
         state.error = "Could not fetch Task";
@@ -69,4 +57,4 @@ const editTaskSlice = createSlice({
   },
 });
 
-export default editTaskSlice;
+export default deleteTaskSlice;

@@ -23,10 +23,8 @@ export const makeTask = createAsyncThunk(
   async (body: createTaskPayload) => {
     try {
       const response = await axiosInstance.post(`${BASE_URL}/tasks/`, body);
-      console.log(response);
       return response;
     } catch (error) {
-      console.log(error);
       return error?.response?.data?.error;
     }
   }

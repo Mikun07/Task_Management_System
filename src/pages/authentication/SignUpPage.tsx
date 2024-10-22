@@ -75,8 +75,7 @@ const SignUpPage = () => {
           navigate("/login");
           toast.success(payload?.data?.message);
         } else {
-          // If sign-up fails, show error toast
-          toast.error("Sign-up failed.");
+          toast.error(payload?.detail);
         }
       })
       .catch(() => {

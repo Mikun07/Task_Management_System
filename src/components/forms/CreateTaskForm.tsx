@@ -10,9 +10,21 @@ import { Status, Priority, Users } from "../../data/data.json";
 import SelectInput from "../input/SelectInput";
 import Button from "../button/Button";
 import { RootState } from "@/redux/root";
-import { makeTask } from "@/redux/features/CreateTaskSlice";
 import toast from "react-hot-toast";
+import { makeTask } from "@/redux/features/createTaskSlice";
+import { useEffect } from "react";
+import { fetchAllUser } from "@/redux/features/getAllUserSlice";
+import { fetchTask } from "@/redux/features/getTaskSlice";
+// import { AiOutlinePlus } from "react-icons/ai";
 
+// Define the User interface
+interface User {
+  id: number;
+  first_name: string;
+  last_name: string;
+}
+
+// Define OptionType for dropdowns
 interface OptionType {
   value: string;
   label: string;
@@ -47,8 +59,7 @@ const CreateTaskSchema = z.object({
 
 export type CreateTaskFormValues = z.infer<typeof CreateTaskSchema>;
 
-const CreateTaskForm = () => {
-  //   const navigate = useNavigate();
+const CreateTaskForm = ({onClose}) => {
   const methods = useForm<CreateTaskFormValues>({
     resolver: zodResolver(CreateTaskSchema),
     mode: "onChange",
@@ -93,11 +104,22 @@ const CreateTaskForm = () => {
     label: priority.label,
   }));
 
-  const userOptions = Users.map((user) => ({
-    value: user.value,
-    label: user.label,
+  useEffect(() => {
+    dispatch(fetchAllUser());
+  }, [dispatch]);
+
+  // Ensure allUser is always at least an empty array
+  const { data: allUser = [] } = useSelector(
+    (state: RootState) => state?.getAllUser || { data: [], loading: false }
+  ) as { data: User[]; loading: boolean };
+
+  // Use optional chaining in case allUser is null or undefined
+  const userOptions = allUser?.map((user) => ({
+    value: user.id.toString(),
+    label: `${user.last_name} ${user.first_name}`,
   }));
 
+  // Submit handler for the form
   const handleCreateTask: SubmitHandler<CreateTaskFormValues> = (
     createTaskValues
   ) => {
@@ -113,15 +135,16 @@ const CreateTaskForm = () => {
       .then((result) => {
         const { payload } = result;
         const success: boolean = Boolean(payload?.status === 201);
-        console.log(success);
         if (success) {
+          dispatch(fetchTask()); // Fetch tasks after deletion
           toast.success("Task Created");
+          onClose()
         } else {
           toast.error("Failed, Try again");
         }
       })
       .catch(() => {
-        toast.error("An error occurred during sign-up.");
+        toast.error("An error occurred during task creation.");
       });
   };
 
@@ -154,6 +177,13 @@ const CreateTaskForm = () => {
               label="Assign To"
               title="Select a User...."
             />
+
+            {/* <div className="flex gap-2 items-center">
+              <button className="p-1 bg-primaryGray hover:bg-primary rounded-md text-white">
+                <AiOutlinePlus size="15" />
+              </button>
+              <p className="text-xs capitalize font-medium">add new assignee</p>
+            </div> */}
 
             <SelectInput
               options={priorityOptions}

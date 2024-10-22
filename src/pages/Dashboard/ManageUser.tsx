@@ -15,7 +15,7 @@ const ManageUser = () => {
     (state: RootState) => state?.getAllUser
   );
 
-  console.log(allUser);
+  // console.log(allUser);
 
   return <div>ManageUser</div>;
 };

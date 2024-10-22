@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Status, Priority, Users } from "../../data/data.json";
+import { Status, Priority } from "../../data/data.json";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,13 +12,22 @@ import TextAreaInput from "../input/TextAreaInput";
 import SelectInput from "../input/SelectInput";
 import DateInput from "../input/DateInput";
 import Button from "../button/Button";
+import { useEffect } from "react";
+import { fetchAllUser } from "@/redux/features/getAllUserSlice";
+import { fetchTask } from "@/redux/features/getTaskSlice";
+
+interface User {
+  id: number;
+  first_name: string;
+  last_name: string;
+}
 
 interface Task {
   id: number;
   title: string;
   priority: string;
   status: string;
-  assigned_to: string;
+  assigned_to: string | User[]; // Either string (single user ID) or array of users
   created_at: string;
   deadline: string;
   description: string;
@@ -34,14 +43,12 @@ const statusValues = Status.map((status) => status.value) as [
   string,
   ...string[]
 ];
-
 const priorityValues = Priority.map((priority) => priority.value) as [
   string,
   ...string[]
 ];
 
-const usersValues = Users.map((users) => users.value) as [string, ...string[]];
-
+// Use Zod schema, assuming `assigned_to` will be a string (user ID) for validation
 const editTaskSchema = z.object({
   title: z
     .string()
@@ -54,12 +61,12 @@ const editTaskSchema = z.object({
   deadline: z.string(),
   priority: z.enum(priorityValues),
   status: z.enum(statusValues),
-  assigned_to: z.enum(usersValues),
+  assigned_to: z.string(), // Enforcing that assigned_to will be a string (user ID)
 });
 
 export type editTaskFormValues = z.infer<typeof editTaskSchema>;
 
-const EditTaskForm = ({ task }: { task: Task }) => {
+const EditTaskForm = ({ task, onClose }: { task: Task }) => {
   const methods = useForm<editTaskFormValues>({
     resolver: zodResolver(editTaskSchema),
     mode: "onChange",
@@ -69,7 +76,10 @@ const EditTaskForm = ({ task }: { task: Task }) => {
       deadline: task.deadline.split("T")[0], // Assuming deadline is in ISO string format
       priority: task.priority,
       status: task.status,
-      assigned_to: task.assigned_to,
+      // Convert assigned_to to string (comma-separated user IDs) if it's an array
+      assigned_to: Array.isArray(task.assigned_to)
+        ? task.assigned_to.map((user) => user.id.toString()).join(", ")
+        : task.assigned_to,
     },
   });
 
@@ -110,32 +120,42 @@ const EditTaskForm = ({ task }: { task: Task }) => {
     label: priority.label,
   }));
 
-  const userOptions = Users.map((user) => ({
-    value: user.value,
-    label: user.label,
+  useEffect(() => {
+    dispatch(fetchAllUser());
+  }, [dispatch]);
+
+  const { data: allUser = [] } = useSelector(
+    (state: RootState) => state?.getAllUser || { data: [], loading: false }
+  ) as { data: User[]; loading: boolean };
+
+  const userOptions = allUser?.map((user) => ({
+    value: user.id.toString(),
+    label: `${user.last_name} ${user.first_name}`,
   }));
 
   const handleEditTask: SubmitHandler<editTaskFormValues> = (
     editTaskValues
   ) => {
-    const editTaskData = {
-      id: task?.id, // Use the ID of the task being edited
-      title: editTaskValues.title || task.title, // Use edited title or default from task
-      description: editTaskValues.description || task.description, // Use edited description or default
-      deadline: editTaskValues.deadline
-        ? new Date(editTaskValues.deadline).toISOString()
-        : task.deadline, // Use edited deadline or default
-      priority: editTaskValues.priority || task.priority, // Use edited priority or default
-      status: editTaskValues.status || task.status, // Use edited status or default
-      assigned_to: editTaskValues.assigned_to || task.assigned_to,
+    const editTaskData: Task = {
+      id: task?.id,
+      title: editTaskValues.title,
+      description: editTaskValues.description,
+      deadline: new Date(editTaskValues.deadline).toISOString(),
+      priority: editTaskValues.priority,
+      status: editTaskValues.status,
+      assigned_to: editTaskValues.assigned_to, // Ensuring this is a string of user IDs
+      created_at: task.created_at,
+      owner_id: task.owner_id,
     };
+
     dispatch(updateTask(editTaskData))
       .then((result) => {
         const { payload } = result;
         const success: boolean = Boolean(payload?.status === 204);
-        console.log(success);
         if (success) {
+          dispatch(fetchTask()); // Fetch tasks after deletion
           toast.success("Task edited");
+          onClose();
         } else {
           toast.error("Failed, Try again");
         }
@@ -173,7 +193,13 @@ const EditTaskForm = ({ task }: { task: Task }) => {
             control={methods.control}
             handleChange={handleUsersChange}
             label="Assign To"
-            title={task?.assigned_to}
+            title={
+              Array.isArray(task.assigned_to)
+                ? task.assigned_to
+                    .map((user) => `${user.first_name} ${user.last_name}`)
+                    .join(", ")
+                : task.assigned_to
+            }
           />
 
           <SelectInput

@@ -2,12 +2,18 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../axios";
 import { TaskState } from "../root";
 
+interface AssignedUser {
+  task_id: number;
+  user_id: number;
+  id: number;
+}
+
 interface Task {
   id: number;
   title: string;
   priority: string;
   status: string;
-  assigned_to: string;
+  assigned_to: AssignedUser[]; // Updated to reflect the array of assigned users
   created_at: string;
   deadline: string;
   description: string;
@@ -15,7 +21,7 @@ interface Task {
 }
 
 const initialState: TaskState = {
-  data: null,
+  data: [],
   success: false,
   error: null,
   loading: false,
@@ -40,9 +46,9 @@ const getTaskSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchTask.fulfilled, (state, action) => {
-        const tasks = action.payload as Task[];
+        const tasks = action.payload as Task[]; // Ensure action.payload is of type Task[]
         state.success = true;
-        state.data = tasks;
+        state.data = tasks; // This should work if data is defined as Task[] in TaskState
         state.error = null;
         state.loading = false;
       })

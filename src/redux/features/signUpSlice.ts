@@ -31,8 +31,7 @@ export const postSignUp = createAsyncThunk(
       });
       return response;
     } catch (error) {
-      console.log({ error });
-      return error;
+      return error?.response?.data;
     }
   }
 );
