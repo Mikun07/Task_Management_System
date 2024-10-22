@@ -15,7 +15,7 @@ const ManageUser = () => {
     dispatch(fetchAllUser());
   }, [dispatch]);
 
-  const { data: allUser, loading: isLoading } = useSelector(
+  const { data: allUser } = useSelector(
     (state: RootState) => state?.getAllUser
   );
 
@@ -44,7 +44,7 @@ const ManageUser = () => {
           </div>
 
           {/* <CreateUserForm onClose={toggleUserModal} /> */}
-          <CreateUserFrom />
+          <CreateUserFrom onClose={toggleUserModal} />
         </Modal>
       </div>
     </div>
