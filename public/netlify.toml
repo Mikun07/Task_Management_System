@@ -3,6 +3,9 @@ command = "npm run build"
 publish = "dist"
 base = "/"
 
+[env]
+NODE_VERSION = "18.x" # Set this to the desired Node.js version
+
 [[redirects]]
 from = "/*"
 to = "/index.html"
