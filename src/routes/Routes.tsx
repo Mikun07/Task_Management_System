@@ -8,6 +8,7 @@ const SignUpPage = lazy(() => import("@/pages/authentication/SignUpPage"));
 const DashboardPage = lazy(() => import("@/pages/Dashboard/LandingPage"));
 const TaskPage = lazy(() => import("@/pages/Dashboard/TaskPage"));
 const ManageUserPage = lazy(() => import("@/pages/Dashboard/ManageUser"));
+const InvitePage = lazy(() => import("@/pages/InvitePage"));
 
 const routes = {
   landing: {
@@ -39,15 +40,23 @@ const routes = {
     element: <DashboardPage />,
     pageName: "Dashboard",
   },
+  
   task: {
     link: "/layout/task",
     element: <TaskPage />,
     pageName: "Manage Task",
   },
+
   user: {
     link: "/layout/user",
     element: <ManageUserPage />,
     pageName: "Manage User",
+  },
+
+  invite: {
+    link: "/invite",
+    element: <InvitePage />,
+    pageName: "invite",
   },
 };
 
@@ -56,6 +65,7 @@ export const PUBLIC_ROUTES = [
   routes?.login,
   routes?.forgotPassword,
   routes?.signUp,
+  routes?.invite,
 ];
 
 export const PRIVATE_ROUTES = [routes?.dashboard, routes?.task, routes?.user];
