@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "declaration": false,
-    "baseUrl": ".",
+    "baseUrl": "src", // Change this to point to the src folder
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["*"] // This remains the same to keep the path aliasing working
     },
     "esModuleInterop": true,
     "resolveJsonModule": true,
