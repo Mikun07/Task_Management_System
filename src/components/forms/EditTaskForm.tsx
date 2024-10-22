@@ -39,6 +39,11 @@ interface OptionType {
   label: string;
 }
 
+interface EditTaskFormProps {
+  task: Task;
+  onClose: () => void; // Define the type for onClose
+}
+
 const statusValues = Status.map((status) => status.value) as [
   string,
   ...string[]
@@ -66,7 +71,7 @@ const editTaskSchema = z.object({
 
 export type editTaskFormValues = z.infer<typeof editTaskSchema>;
 
-const EditTaskForm = ({ task, onClose }: { task: Task }) => {
+const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
   const methods = useForm<editTaskFormValues>({
     resolver: zodResolver(editTaskSchema),
     mode: "onChange",

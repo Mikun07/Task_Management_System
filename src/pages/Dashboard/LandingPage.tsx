@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import DisplayButton from "@/components/button/DisplayButton";
 import Modal from "@/components/modal/Modal";
 import CreateTaskForm from "@/components/forms/CreateTaskForm";
 
 const LandingPage: React.FC = () => {
-  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
 
   const toggleModal = () => setModalOpen(!modalOpen);
@@ -59,7 +57,7 @@ const LandingPage: React.FC = () => {
           </button>
         </div>
 
-        <CreateTaskForm />
+        <CreateTaskForm onClose={toggleModal} />
       </Modal>
     </div>
   );
