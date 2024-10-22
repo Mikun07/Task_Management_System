@@ -86,9 +86,6 @@ const LoginPage = () => {
     navigate("/signUp");
   };
 
-  // console.log("Form Errors:", methods.formState.errors);
-  // console.log("Form Values:", methods.getValues());
-
   return (
     <div className="w-screen h-screen bg-primary bg-opacity-[12%]">
       <div className="flex justify-center w-full h-full items-center">
