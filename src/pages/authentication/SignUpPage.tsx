@@ -10,6 +10,19 @@ import { AppDispatch } from "@/redux/store";
 import { postSignUp } from "@/redux/features/signUpSlice";
 import toast from "react-hot-toast";
 import { RootState } from "@/redux/root";
+import { RolesWithAdmin } from "@/data/data.json";
+import SelectInput from "@/components/input/SelectInput";
+
+// Define OptionType for dropdowns
+interface OptionType {
+  value: string;
+  label: string;
+}
+
+const roleValues = RolesWithAdmin.map((role) => role.value) as [
+  string,
+  ...string[]
+];
 
 // Zod validation schema for form validation
 const passwordSchema = z.string().min(7, { message: "At least 7 characters" });
@@ -31,6 +44,7 @@ const SignUpSchema = z.object({
     .max(30, { message: "At most 30 characters." }),
   phone_number: z.string().min(2, { message: "Enter phone number" }),
   password: passwordSchema,
+  role: z.enum(roleValues),
 });
 
 // Type for form values inferred from the schema
@@ -52,6 +66,19 @@ const SignUpPage = () => {
   // useDispatch hook to dispatch actions to the Redux store
   const dispatch = useDispatch<AppDispatch>();
 
+  const handleRoleChange = (selectedUser: OptionType | null) => {
+    if (selectedUser) {
+      methods.setValue("role", selectedUser.value);
+    } else {
+      methods.setValue("role", "");
+    }
+  };
+
+  const roleOptions = RolesWithAdmin.map((role) => ({
+    value: role.value,
+    label: role.label,
+  }));
+
   // Submit handler for the sign-up form
   const handleSignUp: SubmitHandler<SignUpFormValues> = (signUpValues) => {
     // Prepare the sign-up data
@@ -62,7 +89,7 @@ const SignUpPage = () => {
       last_name: signUpValues.last_name,
       phone_number: signUpValues.phone_number,
       password: signUpValues.password,
-      role: "admin", // Default role is "admin"
+      role: signUpValues?.role,
     };
 
     // Dispatch the postSignUp action to the Redux store
@@ -137,6 +164,13 @@ const SignUpPage = () => {
                   name="password"
                   label="Password"
                   error={methods.formState.errors.password}
+                />
+                <SelectInput
+                  options={roleOptions}
+                  control={methods.control}
+                  handleChange={handleRoleChange}
+                  label="Role"
+                  title="Select Role...."
                 />
               </div>
 
