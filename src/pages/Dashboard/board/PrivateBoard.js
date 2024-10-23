@@ -20,7 +20,7 @@ import { BASE_URL } from "@/config/api";
 import { userToken } from "@/config/auth";
 import { fetchUser } from "@/redux/features/getUserSlice";
 import DisplayButton from "@/components/button/DisplayButton";
-import CreateTaskForm from "@/components/forms/CreateTaskForm";
+import InviteCreateTaskForm from "@/components/forms/InviteCreateTaskForm";
 // Helper function to get priority color based on the task's priority
 const getPriorityColor = (priority) => {
     switch (priority) {
@@ -35,7 +35,9 @@ const getPriorityColor = (priority) => {
     }
 };
 // TaskColumn component that supports drag-and-drop
-const TaskColumn = React.memo(({ title, bgColor, tasks, columnId }) => {
+const TaskColumn = React.memo(({ title, bgColor, tasks, columnId, board }) => {
+    // Now you can use the board object inside the component
+    const isAdminOrTeamLeader = board?.board_role === "admin" || board?.board_role === "teamLeader";
     const [modalEdit, setModalEdit] = useState(false); // State for edit task modal
     const [modalPreview, setModalPreview] = useState(false); // State for preview modal
     const [modalDelete, setModalDelete] = useState(false); // State for preview modal
@@ -85,7 +87,6 @@ const TaskColumn = React.memo(({ title, bgColor, tasks, columnId }) => {
         dispatch(fetchUser());
     }, [dispatch]);
     const { data: allUser = [] } = useSelector((state) => state?.getAllUser || { data: [], loading: false });
-    const { data: user } = useSelector((state) => state.getUser);
     const getUserLabels = (assignedUsers, allUsers) => {
         if (!assignedUsers || assignedUsers.length === 0) {
             return "N/A"; // No users assigned
@@ -118,8 +119,7 @@ const TaskColumn = React.memo(({ title, bgColor, tasks, columnId }) => {
                                             onClick: () => handleDeleteClick(task),
                                         },
                                     ];
-                                    return (_jsx("div", { ref: provided.innerRef, ...provided.draggableProps, ...provided.dragHandleProps, children: _jsx(TaskCard, { title: task.title, subtitle: _jsx("span", { className: getPriorityColor(task.priority), children: task.priority }), mainIcon: user?.role === "admin" ||
-                                                user?.role === "teamLeader" ? (_jsx(OptionButton, { options: options })) : null, actionIcons: [
+                                    return (_jsx("div", { ref: provided.innerRef, ...provided.draggableProps, ...provided.dragHandleProps, children: _jsx(TaskCard, { title: task.title, subtitle: _jsx("span", { className: getPriorityColor(task.priority), children: task.priority }), mainIcon: isAdminOrTeamLeader ? (_jsx(OptionButton, { options: options })) : null, actionIcons: [
                                                 _jsx(GrTextAlignFull, { size: 20, onClick: () => handlePreviewClick(task) }, "1"),
                                                 // <FaRegComment size={20} key="2" />,
                                                 // <MdAttachment size={20} key="3" />,
@@ -141,7 +141,9 @@ const PrivateBoardPage = () => {
     useEffect(() => {
         dispatch(fetchUser());
     }, [dispatch]);
-    const { data: user } = useSelector((state) => state.getUser);
+    // const { data: user } = useSelector((state: RootState) => state.getUser) as {
+    //   data: User;
+    // };
     useEffect(() => {
         if (board?.invited_by_id) {
             dispatch(fetchInviteTasks(board.invited_by_id)); // Pass invited_by_id to the thunk
@@ -269,6 +271,7 @@ const PrivateBoardPage = () => {
     function goBack() {
         window.history.back();
     }
-    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "flex flex-row  justify-between", children: _jsxs("div", { className: "flex gap-3 my-1", children: [_jsx("button", { className: "bg-white p-1 px-4 rounded-md font-bold items-center justify-center flex text-primaryGray", onClick: goBack, children: _jsx(AiOutlineLeft, { size: 20 }) }), (user?.role === "admin" || user?.role === "teamLeader") && (_jsxs("div", { children: [_jsx(DisplayButton, { onClick: toggleModal, title: "Add Task", image: _jsx(AiOutlinePlus, {}) }), _jsxs(Modal, { isOpen: modalOpen, onClose: toggleModal, children: [_jsxs("div", { className: "flex items-center justify-between mb-8", children: [_jsx("h2", { className: "text-xl font-semibold", children: "Create Task" }), _jsx("button", { className: "bg-primary text-white py-2 px-4 rounded", onClick: toggleModal, children: "Close" })] }), _jsx(CreateTaskForm, { onClose: toggleModal })] })] }))] }) }), _jsx(DragDropContext, { onDragStart: onDragStart, onDragEnd: onDragEnd, children: _jsx("div", { className: "flex gap-3", children: columns.map((column, index) => (_jsx(TaskColumn, { title: column.title, bgColor: column.bgColor, tasks: column.tasks, columnId: column.columnId }, index))) }) })] }));
+    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "flex flex-row  justify-between", children: _jsxs("div", { className: "flex gap-3 my-1", children: [_jsx("button", { className: "bg-white p-1 px-4 rounded-md font-bold items-center justify-center flex text-primaryGray", onClick: goBack, children: _jsx(AiOutlineLeft, { size: 20 }) }), (board?.board_role === "admin" ||
+                            board?.board_role === "teamLeader") && (_jsxs("div", { children: [_jsx(DisplayButton, { onClick: toggleModal, title: "Add Task", image: _jsx(AiOutlinePlus, {}) }), _jsxs(Modal, { isOpen: modalOpen, onClose: toggleModal, children: [_jsxs("div", { className: "flex items-center justify-between mb-8", children: [_jsx("h2", { className: "text-xl font-semibold", children: "Create Task" }), _jsx("button", { className: "bg-primary text-white py-2 px-4 rounded", onClick: toggleModal, children: "Close" })] }), _jsx(InviteCreateTaskForm, { invited_by_id: board?.invited_by_id, onClose: toggleModal })] })] }))] }) }), _jsx(DragDropContext, { onDragStart: onDragStart, onDragEnd: onDragEnd, children: _jsx("div", { className: "flex gap-3", children: columns.map((column, index) => (_jsx(TaskColumn, { title: column.title, bgColor: column.bgColor, tasks: column.tasks, columnId: column.columnId, board: board }, index))) }) })] }));
 };
 export default PrivateBoardPage;

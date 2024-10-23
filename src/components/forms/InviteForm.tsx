@@ -10,6 +10,7 @@ import Button from "../button/Button";
 import SelectInput from "../input/SelectInput";
 import { invitedUser } from "@/redux/features/inviteUserSlice";
 import toast from "react-hot-toast";
+import { Roles } from "@/data/data.json";
 
 // Define the User interface
 interface User {
@@ -25,8 +26,11 @@ interface OptionType {
   label: string;
 }
 
+const roleValues = Roles.map((role) => role.value) as [string, ...string[]];
+
 const inviteFormSchema = z.object({
   user_email: z.string(),
+  user_role: z.enum(roleValues),
 });
 
 export type inviteFormValues = z.infer<typeof inviteFormSchema>;
@@ -65,9 +69,23 @@ const InviteForm = ({ onClose }) => {
     }
   };
 
+  const handleRoleChange = (selectedUser: OptionType | null) => {
+    if (selectedUser) {
+      methods.setValue("user_role", selectedUser.value);
+    } else {
+      methods.setValue("user_role", "");
+    }
+  };
+
+  const roleOptions = Roles.map((role) => ({
+    value: role.value,
+    label: role.label,
+  }));
+
   const handleCreateTask: SubmitHandler<inviteFormValues> = (inviteValues) => {
     const inviteUserData = {
       user_email: inviteValues?.user_email,
+      user_role: inviteValues?.user_role, // Change this line
     };
     dispatch(invitedUser(inviteUserData))
       .then((result) => {
@@ -99,6 +117,14 @@ const InviteForm = ({ onClose }) => {
               handleChange={handleUsersChange}
               label="Assign To"
               title="Select a User...."
+            />
+
+            <SelectInput
+              options={roleOptions}
+              control={methods.control}
+              handleChange={handleRoleChange}
+              label="Role"
+              title="Select Role...."
             />
 
             <Button

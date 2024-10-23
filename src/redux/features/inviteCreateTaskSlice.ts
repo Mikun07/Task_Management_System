@@ -1,31 +1,28 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../axios";
-import { TaskState } from "../root";
 
-interface User {
+interface inviteCreateTaskPayload {
   id: number;
-  first_name: string;
-  last_name: string;
-  email: string;
+  title: string;
+  description: string;
+  deadline: string;
+  priority: string;
+  status: string;
+  assigned_to: string;
 }
 
-interface Evite {
-  user_email: string | User[];
-  user_role: string;
-}
-
-const initialState: TaskState = {
+const initialState = {
   data: null,
   success: false,
   error: null,
   loading: false,
 };
 
-export const invitedUser = createAsyncThunk(
-  "task/invitedUser",
-  async (body: Evite) => {
+export const inviteMakeTask = createAsyncThunk(
+  "user/inviteMakeTask",
+  async (body: inviteCreateTaskPayload) => {
     try {
-      const response = await axiosInstance.post(`/user/invite`, body);
+      const response = await axiosInstance.post(`/tasks/${body?.id}`, body);
       return response;
     } catch (error) {
       return error?.response?.data?.error;
@@ -33,18 +30,18 @@ export const invitedUser = createAsyncThunk(
   }
 );
 
-const inviteUserSlice = createSlice({
-  name: "sendInvite",
+const inviteCreateTaskSlice = createSlice({
+  name: "inviteCreateTask",
   initialState,
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(invitedUser.pending, (state) => {
+      .addCase(inviteMakeTask.pending, (state) => {
         state.loading = true;
       })
-      .addCase(invitedUser.fulfilled, (state, action) => {
+      .addCase(inviteMakeTask.fulfilled, (state, action) => {
         const { payload } = action;
-        if (payload?.status === 200) {
+        if (payload?.status === 201) {
           state.success = true;
           state.data = payload?.data;
           state.error = null;
@@ -55,12 +52,12 @@ const inviteUserSlice = createSlice({
         }
         state.loading = false;
       })
-      .addCase(invitedUser.rejected, (state) => {
+      .addCase(inviteMakeTask.rejected, (state) => {
         state.loading = false;
         state.success = false;
-        state.error = "Could not fetch Task";
+        state.error = "Could not create task";
       });
   },
 });
 
-export default inviteUserSlice;
+export default inviteCreateTaskSlice;

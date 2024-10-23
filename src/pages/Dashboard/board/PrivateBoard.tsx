@@ -26,7 +26,7 @@ import { BASE_URL } from "@/config/api";
 import { userToken } from "@/config/auth";
 import { fetchUser } from "@/redux/features/getUserSlice";
 import DisplayButton from "@/components/button/DisplayButton";
-import CreateTaskForm from "@/components/forms/CreateTaskForm";
+import InviteCreateTaskForm from "@/components/forms/InviteCreateTaskForm";
 
 // Interfaces
 interface User {
@@ -45,7 +45,8 @@ interface User {
 interface Board {
   id: number;
   invited_by_id: number;
-  invited_user_data: User;
+  invited_user_data: User; // Contains the user data for the invited user
+  board_role: string; // Role specific to the board, such as "teamMember"
 }
 
 interface AssignedUser {
@@ -76,6 +77,7 @@ interface TaskColumnProps {
   bgColor: string;
   tasks: Task[];
   columnId: string; // Each column will have an ID for DnD
+  board: Board | undefined; // Add board to the props
 }
 
 interface TaskState {
@@ -101,7 +103,10 @@ const getPriorityColor = (priority: string) => {
 
 // TaskColumn component that supports drag-and-drop
 const TaskColumn: React.FC<TaskColumnProps> = React.memo(
-  ({ title, bgColor, tasks, columnId }) => {
+  ({ title, bgColor, tasks, columnId, board }) => {
+    // Now you can use the board object inside the component
+    const isAdminOrTeamLeader =
+      board?.board_role === "admin" || board?.board_role === "teamLeader";
     const [modalEdit, setModalEdit] = useState(false); // State for edit task modal
     const [modalPreview, setModalPreview] = useState(false); // State for preview modal
     const [modalDelete, setModalDelete] = useState(false); // State for preview modal
@@ -157,10 +162,6 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
     const { data: allUser = [] } = useSelector(
       (state: RootState) => state?.getAllUser || { data: [], loading: false }
     ) as { data: User[]; loading: boolean };
-
-    const { data: user } = useSelector((state: RootState) => state.getUser) as {
-      data: User;
-    };
 
     const getUserLabels = (
       assignedUsers: { user_id: number }[],
@@ -239,8 +240,7 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
                               </span>
                             }
                             mainIcon={
-                              user?.role === "admin" ||
-                              user?.role === "teamLeader" ? (
+                              isAdminOrTeamLeader ? (
                                 <OptionButton options={options} />
                               ) : null
                             }
@@ -344,9 +344,9 @@ const PrivateBoardPage: React.FC = () => {
     dispatch(fetchUser());
   }, [dispatch]);
 
-  const { data: user } = useSelector((state: RootState) => state.getUser) as {
-    data: User;
-  };
+  // const { data: user } = useSelector((state: RootState) => state.getUser) as {
+  //   data: User;
+  // };
 
   useEffect(() => {
     if (board?.invited_by_id) {
@@ -516,7 +516,8 @@ const PrivateBoardPage: React.FC = () => {
             <AiOutlineLeft size={20} />
           </button>
 
-          {(user?.role === "admin" || user?.role === "teamLeader") && (
+          {(board?.board_role === "admin" ||
+            board?.board_role === "teamLeader") && (
             <div>
               <DisplayButton
                 onClick={toggleModal}
@@ -534,7 +535,10 @@ const PrivateBoardPage: React.FC = () => {
                   </button>
                 </div>
 
-                <CreateTaskForm onClose={toggleModal} />
+                <InviteCreateTaskForm
+                  invited_by_id={board?.invited_by_id}
+                  onClose={toggleModal}
+                />
               </Modal>
             </div>
           )}
@@ -550,6 +554,7 @@ const PrivateBoardPage: React.FC = () => {
               bgColor={column.bgColor}
               tasks={column.tasks}
               columnId={column.columnId}
+              board={board}
             />
           ))}
         </div>

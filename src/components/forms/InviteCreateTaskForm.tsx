@@ -14,8 +14,7 @@ import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { fetchAllUser } from "@/redux/features/getAllUserSlice";
 import { fetchTask } from "@/redux/features/getTaskSlice";
-import { makeTask } from "@/redux/features/createTaskSlice";
-// import { makeTask } from "@/redux/features/createTaskSlice";
+import { inviteMakeTask } from "@/redux/features/inviteCreateTaskSlice";
 
 // Define the User interface
 interface User {
@@ -40,6 +39,8 @@ const priorityValues = Priority.map((priority) => priority.value) as [
   ...string[]
 ];
 
+export type CreateTaskFormValues = z.infer<typeof CreateTaskSchema>;
+
 const CreateTaskSchema = z.object({
   title: z
     .string()
@@ -55,9 +56,13 @@ const CreateTaskSchema = z.object({
   assigned_to: z.string(),
 });
 
-export type CreateTaskFormValues = z.infer<typeof CreateTaskSchema>;
-
-const CreateTaskForm = ({ onClose }) => {
+const InviteCreateTaskForm = ({
+  invited_by_id,
+  onClose,
+}: {
+  invited_by_id: number;
+  onClose: () => void;
+}) => {
   const methods = useForm<CreateTaskFormValues>({
     resolver: zodResolver(CreateTaskSchema),
     mode: "onChange",
@@ -106,18 +111,15 @@ const CreateTaskForm = ({ onClose }) => {
     dispatch(fetchAllUser());
   }, [dispatch]);
 
-  // Ensure allUser is always at least an empty array
   const { data: allUser = [] } = useSelector(
     (state: RootState) => state?.getAllUser || { data: [], loading: false }
   ) as { data: User[]; loading: boolean };
 
-  // Use optional chaining in case allUser is null or undefined
   const userOptions = allUser?.map((user) => ({
     value: user.id.toString(),
     label: `${user.last_name} ${user.first_name}`,
   }));
 
-  // Submit handler for the form
   const handleCreateTask: SubmitHandler<CreateTaskFormValues> = (
     createTaskValues
   ) => {
@@ -128,13 +130,15 @@ const CreateTaskForm = ({ onClose }) => {
       priority: createTaskValues?.priority,
       status: createTaskValues?.status,
       assigned_to: createTaskValues?.assigned_to,
+      id: invited_by_id || undefined, // Pass it only if available
     };
-    dispatch(makeTask(createTaskData))
+
+    dispatch(inviteMakeTask(createTaskData))
       .then((result) => {
         const { payload } = result;
         const success: boolean = Boolean(payload?.status === 201);
         if (success) {
-          dispatch(fetchTask()); // Fetch tasks after deletion
+          dispatch(fetchTask()); // Fetch tasks after creation
           toast.success("Task Created");
           onClose();
         } else {
@@ -145,7 +149,6 @@ const CreateTaskForm = ({ onClose }) => {
         toast.error("An error occurred during task creation.");
       });
   };
-
   return (
     <div>
       <div className="lg:w-[550px] md:w-[500px] w-full h-[400px] overflow-y-auto custom__scrollbar px-4">
@@ -175,13 +178,6 @@ const CreateTaskForm = ({ onClose }) => {
               label="Assign To"
               title="Select a User...."
             />
-
-            {/* <div className="flex gap-2 items-center">
-              <button className="p-1 bg-primaryGray hover:bg-primary rounded-md text-white">
-                <AiOutlinePlus size="15" />
-              </button>
-              <p className="text-xs capitalize font-medium">add new assignee</p>
-            </div> */}
 
             <SelectInput
               options={priorityOptions}
@@ -221,4 +217,4 @@ const CreateTaskForm = ({ onClose }) => {
   );
 };
 
-export default CreateTaskForm;
+export default InviteCreateTaskForm;

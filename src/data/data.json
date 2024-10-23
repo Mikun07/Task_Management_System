@@ -9,20 +9,6 @@
       "label": "Team Member"
     }
   ],
-  "RolesWithAdmin": [
-    {
-      "value": "admin",
-      "label": "Product Owner"
-    },
-    {
-      "value": "teamLeader",
-      "label": "Team Leader"
-    },
-    {
-      "value": "teamMember",
-      "label": "Team Member"
-    }
-  ],
   "Priority": [
     {
       "value": "High",

@@ -45,7 +45,6 @@ const LoginPage = () => {
         dispatch(postLogin(loginData))
             .then((result) => {
             const { payload } = result;
-            console.log(payload);
             const success = payload?.status === 200;
             if (success) {
                 navigate("/layout/board");
