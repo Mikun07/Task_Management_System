@@ -1,4 +1,5 @@
-import DisplayButton from "@/components/button/DisplayButton";
+import BoardCard from "@/components/card/BoardCard";
+import BoardCardSkeleton from "@/components/skeleton/BoardCardSkeleton";
 import { fetchAllUser } from "@/redux/features/getAllUserSlice";
 import { fetchBoard } from "@/redux/features/getBoardSlice";
 import { RootState } from "@/redux/root";
@@ -14,6 +15,12 @@ interface User {
   email: string;
 }
 
+interface Board {
+  id: number;
+  invited_by_id: number;
+  invited_user_data: User;
+}
+
 const ManageBoard: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -23,14 +30,15 @@ const ManageBoard: React.FC = () => {
     dispatch(fetchAllUser());
   }, [dispatch]);
 
-  const { data: board, loading: isLoading } = useSelector(
-    (state: RootState) => state?.getBoard
-  );
+  const { data: board = [], loading: isLoading } = useSelector(
+    (state: RootState) => state?.getBoard || { data: [], loading: false }
+  ) as { data: Board[]; loading: boolean };
 
   const { data: allUser = [] } = useSelector(
     (state: RootState) => state?.getAllUser || { data: [], loading: false }
   ) as { data: User[]; loading: boolean };
 
+  // Function to get user labels
   const getUserLabels = (
     assignedUsers: { user_id: number }[],
     allUsers: User[]
@@ -47,7 +55,7 @@ const ManageBoard: React.FC = () => {
           // Get first and last initials from the matched user
           const firstInitial = user.first_name ? user.first_name : "";
           const lastInitial = user.last_name ? user.last_name : "";
-          return `${lastInitial}${" "}${firstInitial}`;
+          return `${lastInitial} ${firstInitial}`.trim();
         }
         return ""; // Return empty string if no user found
       })
@@ -55,18 +63,41 @@ const ManageBoard: React.FC = () => {
       .join(", "); // Join initials with commas if there are multiple users
   };
 
+  // Pass board information to the /layout/private route
+  const handleInvitedBoard = (boardItem: Board) => {
+    navigate("/layout/private", { state: { board: boardItem } });
+  };
+
   const handleMyBoard = () => {
     navigate("/layout/task");
   };
 
-  const handleInvitedBoard = () => {
-    navigate("/layout/private");
-  };
-
   return (
-    <div className="flex lg:flex-row flex-col gap-10">
-      <DisplayButton onClick={handleMyBoard} title="My Board" />
-      <DisplayButton onClick={handleInvitedBoard} title="invited board" />
+    <div className="grid lg:grid-cols-3 sm:grid-cols-2 gap-6 overflow-y-auto">
+      <BoardCard title="My" onClick={handleMyBoard} />
+
+      {!isLoading ? (
+        board.length > 0 ? (
+          board.map((boardItem) => (
+            <BoardCard
+              key={boardItem.id}
+              title={getUserLabels(
+                [{ user_id: boardItem.invited_by_id }],
+                allUser
+              )}
+              onClick={() => handleInvitedBoard(boardItem)} // Pass individual board data
+            />
+          ))
+        ) : (
+          <p>No invite boards available</p>
+        )
+      ) : (
+        <>
+          <BoardCardSkeleton />
+          <BoardCardSkeleton />
+          <BoardCardSkeleton />
+        </>
+      )}
     </div>
   );
 };

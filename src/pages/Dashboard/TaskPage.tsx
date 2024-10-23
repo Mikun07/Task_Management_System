@@ -32,22 +32,36 @@ interface User {
   id: number;
   first_name: string;
   last_name: string;
+  email: string;
+  hashed_password: string;
+  is_active: boolean;
+  phone_number: string;
+  role: string;
+  username: string;
+  user_id: number;
 }
 
 interface dTask {
   id: number;
 }
 
+interface AssignedUser {
+  user_id: number; // User ID of the assigned user
+  id: number; // Unique ID for the assigned entry
+  task_id: number; // Task ID to which the user is assigned
+}
+
 interface Task {
   id: number;
   title: string;
-  priority: string;
   status: string;
-  assigned_to: User[]; // Updated to reflect the array of assigned users
   created_at: string;
-  deadline: string;
   description: string;
+  deadline: string;
+  priority: string;
   owner_id: number;
+  assigned_to: User[];
+  assigned: AssignedUser[]; // Array of assigned users
 }
 
 // Task state interface from Redux store
@@ -223,7 +237,6 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
                               // <FaRegComment size={20} key="2" />,
                               // <MdAttachment size={20} key="3" />,
                             ]}
-                            // @ts-ignore
                             assignee={getUserLabels(task.assigned, allUser)} // Display assignee's initials
                           />
                         </div>
@@ -473,7 +486,7 @@ const TaskPage: React.FC = () => {
 
   return (
     <>
-      <div className="flex lg:flex-row flex-col justify-between">
+      <div className="flex flex-row  justify-between">
         <div className="flex gap-3 my-1">
           <button className="bg-white p-1 px-4 rounded-md font-bold items-center justify-center flex text-primaryGray" onClick={goBack}>
             <AiOutlineLeft size={20} />

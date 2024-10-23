@@ -1,25 +1,24 @@
 import { BASE_URL } from "@/config/api";
 import React from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const InvitePage = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    navigate("/login");
+    navigate("/signUp");
   };
 
   function sendToken() {
     // Get the current page URL
     const url = window.location.href;
-    console.log("Current URL:", url); // Debug the URL
 
     // Create a URL object to easily parse the query parameters
     const urlObj = new URL(url);
 
     // Extract the token parameter from the URL
     const token = urlObj.searchParams.get("token");
-    console.log("Extracted Token:", token); // Debug the extracted token
 
     if (token) {
       // Prepare the POST request
@@ -32,13 +31,14 @@ const InvitePage = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Response from server:", data); // Debug the server response
+          navigate("/login");
+          toast.success("Response from server:", data?.message); // Debug the server response
         })
         .catch((error) => {
-          console.error("Error sending token:", error); // Handle any errors
+          toast.error("Error sending token:", error); // Handle any errors
         });
     } else {
-      console.log("No token found in the URL");
+      toast.error("No token found in the URL");
     }
   }
 
