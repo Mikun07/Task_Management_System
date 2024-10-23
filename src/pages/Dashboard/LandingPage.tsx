@@ -40,7 +40,7 @@ const LandingPage: React.FC = () => {
     if (user?.role === "admin") {
       buttons.push({
         title: "Create new user",
-        path: "/create-board",
+        // path: "/create-board",
         onClick: toggleUserModal,
       });
     }

@@ -14,7 +14,7 @@ import Modal from "@/components/modal/Modal";
 import EditTaskForm from "@/components/forms/EditTaskForm";
 import PreviewForm from "@/components/forms/PreviewForm";
 import DisplayButton from "@/components/button/DisplayButton";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiOutlineLeft, AiOutlinePlus } from "react-icons/ai";
 // import { FaRegComment } from "react-icons/fa";
 import { GrTextAlignFull } from "react-icons/gr";
 // import { MdAttachment } from "react-icons/md";
@@ -467,31 +467,41 @@ const TaskPage: React.FC = () => {
   const toggleModal = () => setModalOpen(!modalOpen);
   const toggleModalInvite = () => setModalInvite(!modalInvite);
 
+  function goBack() {
+    window.history.back();
+  }
+
   return (
     <>
       <div className="flex lg:flex-row flex-col justify-between">
-        <div className="my-1 rounded-md">
-          <DisplayButton
-            onClick={toggleModal}
-            title="Add Task"
-            image={<AiOutlinePlus />}
-          />
-          <Modal isOpen={modalOpen} onClose={toggleModal}>
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-xl font-semibold">Create Task</h2>
-              <button
-                className="bg-primary text-white py-2 px-4 rounded"
-                onClick={toggleModal}
-              >
-                Close
-              </button>
-            </div>
+        <div className="flex gap-3 my-1">
+          <button className="bg-white p-1 px-4 rounded-md font-bold items-center justify-center flex text-primaryGray" onClick={goBack}>
+            <AiOutlineLeft size={20} />
+          </button>
 
-            <CreateTaskForm onClose={toggleModal} />
-          </Modal>
+          <div>
+            <DisplayButton
+              onClick={toggleModal}
+              title="Add Task"
+              image={<AiOutlinePlus />}
+            />
+            <Modal isOpen={modalOpen} onClose={toggleModal}>
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-xl font-semibold">Create Task</h2>
+                <button
+                  className="bg-primary text-white py-2 px-4 rounded"
+                  onClick={toggleModal}
+                >
+                  Close
+                </button>
+              </div>
+
+              <CreateTaskForm onClose={toggleModal} />
+            </Modal>
+          </div>
         </div>
 
-        <div className="my-1 rounded-md">
+        <div>
           <DisplayButton
             onClick={toggleModalInvite}
             title="Invite"

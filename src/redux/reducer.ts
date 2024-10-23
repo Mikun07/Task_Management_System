@@ -8,6 +8,7 @@ import getAllUserSlice from "./features/getAllUserSlice";
 import deleteTaskSlice from "./features/deleteTaskSlice";
 import inviteUserSlice from "./features/inviteUserSlice";
 import createTaskSlice from "./features/createTaskSlice";
+import getBoardSlice from "./features/getBoardSlice";
 
 const rootReducer = combineReducers({
   signUp: signUpSlice?.reducer,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   editTask: editTaskSlice?.reducer,
   removeTask: deleteTaskSlice?.reducer,
   sendInvite: inviteUserSlice?.reducer,
+  getBoard: getBoardSlice?.reducer,
 });
 
 export default rootReducer;

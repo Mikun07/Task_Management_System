@@ -5,11 +5,12 @@ import classNames from "classnames";
 import { motion } from "framer-motion";
 import TaskIcon from "@/assets/svg/TaskIcon";
 // import ReportIcon from "@/assets/svg/ReportIcon";
-import TeamIcon from "@/assets/svg/TeamIcon";
+// import TeamIcon from "@/assets/svg/TeamIcon";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { fetchUser } from "@/redux/features/getUserSlice";
 import { RootState } from "@/redux/root";
+import NewBoardIcon from "@/assets/svg/NewBoardIcon";
 
 interface MenuItem {
   url: string;
@@ -39,25 +40,24 @@ const Sidebar: React.FC = () => {
       activeIcon: <DashboardIcon size="25" />,
       tooltip: "Dashboard",
     },
-    {
-      url: "/layout/task",
-      icon: <TaskIcon color="#888888" size="25" />,
-      activeIcon: <TaskIcon size="25" />,
-      tooltip: "Task",
-    },
     // {
-    //   url: "/layout/user",
-    //   icon: <TeamIcon color="#888888" size="25" />,
-    //   activeIcon: <TeamIcon size="25" />,
-    //   tooltip: "User",
+    //   url: "/layout/task",
+    //   icon: <TaskIcon color="#888888" size="25" />,
+    //   activeIcon: <TaskIcon size="25" />,
+    //   tooltip: "Task",
     // },
+    {
+      url: "/layout/board",
+      icon: <NewBoardIcon color="#888888" size="25" />,
+      activeIcon: <NewBoardIcon size="25" />,
+      tooltip: "Board",
+    },
     // {
     //   url: "/layout/report",
     //   icon: <ReportIcon color="#888888" size="25" />,
     //   activeIcon: <ReportIcon size="25" />,
     //   tooltip: "Report",
     // },
-    
   ];
 
   const menuVariants = {
