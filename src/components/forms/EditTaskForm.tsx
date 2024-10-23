@@ -16,19 +16,12 @@ import { useEffect } from "react";
 import { fetchAllUser } from "@/redux/features/getAllUserSlice";
 import { fetchTask } from "@/redux/features/getTaskSlice";
 
-interface User {
-  id: number;
-  first_name: string;
-  last_name: string;
-  // email: string;
-}
-
 interface Task {
   id: number;
   title: string;
   priority: string;
   status: string;
-  assigned_to: string | User[]; // Either string (single user ID) or array of users
+  assigned_to: string; // Either string (single user ID) or array of users
   created_at: string;
   deadline: string;
   description: string;
@@ -68,7 +61,7 @@ const editTaskSchema = z.object({
   deadline: z.string(),
   priority: z.enum(priorityValues),
   status: z.enum(statusValues),
-  assigned_to: z.string(), // Enforcing that assigned_to will be a string (user ID)
+  assigned_to: z.string().optional(),
 });
 
 export type editTaskFormValues = z.infer<typeof editTaskSchema>;
@@ -83,10 +76,7 @@ const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
       deadline: task.deadline.split("T")[0], // Assuming deadline is in ISO string format
       priority: task.priority,
       status: task.status,
-      // Convert assigned_to to string (comma-separated user IDs) if it's an array
-      assigned_to: Array.isArray(task.assigned_to)
-        ? task.assigned_to.map((user) => user.id.toString()).join(", ")
-        : task.assigned_to,
+      assigned_to: task.assigned_to,
     },
   });
 
@@ -109,13 +99,13 @@ const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
     }
   };
 
-  const handleUsersChange = (selectedUser: OptionType | null) => {
-    if (selectedUser) {
-      methods.setValue("assigned_to", selectedUser.value);
-    } else {
-      methods.setValue("assigned_to", "");
-    }
-  };
+  // const handleUsersChange = (selectedUser: OptionType | null) => {
+  //   if (selectedUser) {
+  //     methods.setValue("assigned_to", selectedUser.value);
+  //   } else {
+  //     methods.setValue("assigned_to", "");
+  //   }
+  // };
 
   const statusOptions = Status.map((status) => ({
     value: status.value,
@@ -131,15 +121,6 @@ const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
     dispatch(fetchAllUser());
   }, [dispatch]);
 
-  const { data: allUser = [] } = useSelector(
-    (state: RootState) => state?.getAllUser || { data: [], loading: false }
-  ) as { data: User[]; loading: boolean };
-
-  const userOptions = allUser?.map((user) => ({
-    value: user.id.toString(),
-    label: `${user.last_name} ${user.first_name}`,
-  }));
-
   const handleEditTask: SubmitHandler<editTaskFormValues> = (
     editTaskValues
   ) => {
@@ -150,7 +131,7 @@ const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
       deadline: new Date(editTaskValues.deadline).toISOString(),
       priority: editTaskValues.priority,
       status: editTaskValues.status,
-      assigned_to: editTaskValues.assigned_to, // Ensuring this is a string of user IDs
+      assigned_to: task.assigned_to, // Ensuring this is a string of user IDs
       created_at: task.created_at,
       owner_id: task.owner_id,
     };
@@ -195,7 +176,7 @@ const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
             error={methods.formState.errors.description}
           />
 
-          <SelectInput
+          {/* <SelectInput
             options={userOptions}
             control={methods.control}
             handleChange={handleUsersChange}
@@ -207,7 +188,7 @@ const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
                     .join(", ")
                 : task.assigned_to
             }
-          />
+          /> */}
 
           <SelectInput
             options={priorityOptions}

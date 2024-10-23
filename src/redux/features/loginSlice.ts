@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { BASE_URL } from "../../config/api";
 import { LoginState } from "../root";
 
@@ -10,7 +10,7 @@ interface loginPayload {
 
 const initialState: LoginState = {
   success: false,
-  data: null,
+  data: [],
   error: null,
   isLoggedIn: false,
   loading: false,
@@ -18,28 +18,18 @@ const initialState: LoginState = {
 
 export const postLogin = createAsyncThunk(
   "login/postLogin",
-  async (body: loginPayload, { rejectWithValue }) => {
+  async (body: loginPayload) => {
     try {
-      const params = new URLSearchParams();
-      params.append("username", body.username);
-      params.append("password", body.password);
-
-      const response = await axios.post(`${BASE_URL}/auth/token`, params, {
+      const response = await axios.post(`${BASE_URL}/auth/token`, body, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-
-      // Return only serializable parts of the response
-      const { data, status } = response;
+      const data = response?.data;
+      const status = response?.status;
       return { data, status };
-    } catch (error: unknown) {
-      // Check if the error is an AxiosError to provide proper typing
-      if (error instanceof AxiosError) {
-        return rejectWithValue(error.response?.data || { message: "Login failed" });
-      }
-      // If the error is not AxiosError, reject with a generic message
-      return rejectWithValue({ message: "An unknown error occurred" });
+    } catch (error) {
+      return error?.response?.data;
     }
   }
 );

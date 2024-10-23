@@ -1,15 +1,15 @@
-import DashboardIcon from "@/assets/svg/DashboardIcon";
-import React, { useEffect } from "react";
+// import DashboardIcon from "@/assets/svg/DashboardIcon";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import classNames from "classnames";
 import { motion } from "framer-motion";
-import TaskIcon from "@/assets/svg/TaskIcon";
+// import TaskIcon from "@/assets/svg/TaskIcon";
 // import ReportIcon from "@/assets/svg/ReportIcon";
 // import TeamIcon from "@/assets/svg/TeamIcon";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import { fetchUser } from "@/redux/features/getUserSlice";
-import { RootState } from "@/redux/root";
+// import { useDispatch, useSelector } from "react-redux";
+// import { AppDispatch } from "@/redux/store";
+// import { fetchUser } from "@/redux/features/getUserSlice";
+// import { RootState } from "@/redux/root";
 import NewBoardIcon from "@/assets/svg/NewBoardIcon";
 
 interface MenuItem {
@@ -21,25 +21,25 @@ interface MenuItem {
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => {
-    dispatch(fetchUser());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchUser());
+  // }, [dispatch]);
 
-  const { data: user, loading: isLoading } = useSelector(
-    (state: RootState) => state?.getUser
-  );
+  // const { data: user, loading: isLoading } = useSelector(
+  //   (state: RootState) => state?.getUser
+  // );
 
   const isMenuActive = (menuUrl: string) => location.pathname === menuUrl;
 
   const mainMenuItems: MenuItem[] = [
-    {
-      url: "/layout/dashboard",
-      icon: <DashboardIcon color="#888888" size="25" />,
-      activeIcon: <DashboardIcon size="25" />,
-      tooltip: "Dashboard",
-    },
+    // {
+    //   url: "/layout/dashboard",
+    //   icon: <DashboardIcon color="#888888" size="25" />,
+    //   activeIcon: <DashboardIcon size="25" />,
+    //   tooltip: "Dashboard",
+    // },
     // {
     //   url: "/layout/task",
     //   icon: <TaskIcon color="#888888" size="25" />,

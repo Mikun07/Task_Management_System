@@ -15,7 +15,7 @@ interface SignUpPayload {
 
 const initialState: BaseState = {
   success: false,
-  data: null,
+  data: [],
   error: null,
   loading: false,
 };

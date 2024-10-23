@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { removeTask } from "@/redux/features/deleteTaskSlice";
-import { fetchTask } from "@/redux/features/getTaskSlice";
 import toast from "react-hot-toast";
 import { fetchAllUser } from "@/redux/features/getAllUserSlice";
 import { RootState } from "@/redux/root";
@@ -61,7 +60,7 @@ interface Task {
   deadline: string;
   priority: string;
   owner_id: number;
-  assigned_to: User[];
+  assigned_to: string;
   assigned: AssignedUser[]; // Array of assigned users
 }
 
@@ -136,7 +135,8 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
         const result = await dispatch(removeTask(deleteTaskData));
         const { payload } = result;
         if (payload?.status === 204) {
-          dispatch(fetchTask()); // Fetch tasks after deletion
+          toast.success("Task Deleted");
+          window.location.reload();
           toast.success("Task Deleted");
         } else {
           toast.error(payload?.detail);

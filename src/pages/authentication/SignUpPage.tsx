@@ -80,7 +80,7 @@ const SignUpPage = () => {
       })
       .catch(() => {
         // Handle errors during sign-up process
-        toast.error("An error occurred during sign-up.");
+        toast.error("network error");
       });
   };
 

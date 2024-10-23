@@ -60,7 +60,7 @@ interface Task {
   deadline: string;
   priority: string;
   owner_id: number;
-  assigned_to: User[];
+  assigned_to: string;
   assigned: AssignedUser[]; // Array of assigned users
 }
 

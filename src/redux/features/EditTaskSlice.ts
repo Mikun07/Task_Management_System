@@ -2,18 +2,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../axios";
 import { TaskState } from "../root";
 
-interface User {
-  id: number;
-  first_name: string;
-  last_name: string;
-}
-
 interface Task {
   id: number;
   title: string;
   priority: string;
   status: string;
-  assigned_to: string | User[]; // Updated to reflect the array of assigned users
+  assigned_to: string; // Updated to reflect the array of assigned users
   created_at: string;
   deadline: string;
   description: string;

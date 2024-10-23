@@ -10,20 +10,20 @@ import { AppDispatch } from "@/redux/store";
 import { postLogin } from "@/redux/features/loginSlice";
 import toast from "react-hot-toast";
 import { RootState } from "@/redux/root";
-import { PayloadAction } from "@reduxjs/toolkit";
+// import { PayloadAction } from "@reduxjs/toolkit";
 
-interface loginPayload {
-  username: string;
-  password: string;
-}
+// interface loginPayload {
+//   username: string;
+//   password: string;
+// }
 
-interface LoginResponse {
-  access_token: string;
-  token_type: string;
-  status: number;
-  message?: string;
-  detail?: string;
-}
+// interface LoginResponse {
+//   access_token: string;
+//   token_type: string;
+//   status: number;
+//   message?: string;
+//   detail?: string;
+// }
 
 const passwordSchema = z.string().min(7, { message: "At least 7 characters" });
 
@@ -55,26 +55,19 @@ const LoginPage = () => {
 
     dispatch(postLogin(loginData))
       .then((result) => {
-        const { payload } = result as PayloadAction<
-          { data: LoginResponse; status: number },
-          string,
-          { arg: loginPayload; requestId: string; requestStatus: "fulfilled" },
-          never
-        >;
+        const { payload } = result;
+        console.log(payload);
+
         const success: boolean = payload?.status === 200;
         if (success) {
-          navigate("/layout/dashboard");
+          navigate("/layout/board");
           toast.success("Login Successful");
         } else {
-          const errorMessage =
-            payload?.data?.detail ||
-            payload?.data?.message ||
-            "Invalid username or password";
-          toast.error(errorMessage);
+          toast.error(payload?.detail);
         }
       })
-      .catch((error) => {
-        toast.error("Login error: " + (error as Error).message);
+      .catch(() => {
+        toast.error("Network Error");
       });
   };
 
