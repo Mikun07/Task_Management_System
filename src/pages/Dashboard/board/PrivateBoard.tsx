@@ -20,10 +20,13 @@ import EditTaskForm from "@/components/forms/EditTaskForm";
 import PreviewForm from "@/components/forms/PreviewForm";
 import { fetchInviteTasks } from "@/redux/features/getInviteTaskSlice";
 // import CreateTaskForm from "@/components/forms/CreateTaskForm";
-import { AiOutlineLeft } from "react-icons/ai";
+import { AiOutlineLeft, AiOutlinePlus } from "react-icons/ai";
 // import DisplayButton from "@/components/button/DisplayButton";
 import { BASE_URL } from "@/config/api";
 import { userToken } from "@/config/auth";
+import { fetchUser } from "@/redux/features/getUserSlice";
+import DisplayButton from "@/components/button/DisplayButton";
+import CreateTaskForm from "@/components/forms/CreateTaskForm";
 
 // Interfaces
 interface User {
@@ -148,11 +151,16 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
 
     useEffect(() => {
       dispatch(fetchAllUser());
+      dispatch(fetchUser());
     }, [dispatch]);
 
     const { data: allUser = [] } = useSelector(
       (state: RootState) => state?.getAllUser || { data: [], loading: false }
     ) as { data: User[]; loading: boolean };
+
+    const { data: user } = useSelector((state: RootState) => state.getUser) as {
+      data: User;
+    };
 
     const getUserLabels = (
       assignedUsers: { user_id: number }[],
@@ -230,7 +238,12 @@ const TaskColumn: React.FC<TaskColumnProps> = React.memo(
                                 {task.priority}
                               </span>
                             }
-                            mainIcon={<OptionButton options={options} />}
+                            mainIcon={
+                              user?.role === "admin" ||
+                              user?.role === "teamLeader" ? (
+                                <OptionButton options={options} />
+                              ) : null
+                            }
                             actionIcons={[
                               <GrTextAlignFull
                                 size={20}
@@ -319,13 +332,21 @@ const PrivateBoardPage: React.FC = () => {
   const board: Board | undefined = location.state?.board;
 
   const dispatch = useDispatch<AppDispatch>();
-  // const [modalOpen, setModalOpen] = useState(false); // State for add task modal
+  const [modalOpen, setModalOpen] = useState(false); // State for add task modal
 
   const [taskList, setTaskList] = useState<Task[]>([]); // Initialize with an empty array
 
   const { data: tasks, loading: isLoading = [] } = useSelector(
     (state: RootState) => state?.getInviteTask as TaskState
   );
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
+
+  const { data: user } = useSelector((state: RootState) => state.getUser) as {
+    data: User;
+  };
 
   useEffect(() => {
     if (board?.invited_by_id) {
@@ -478,7 +499,7 @@ const PrivateBoardPage: React.FC = () => {
     }
   };
 
-  // const toggleModal = () => setModalOpen(!modalOpen);
+  const toggleModal = () => setModalOpen(!modalOpen);
 
   function goBack() {
     window.history.back();
@@ -495,26 +516,28 @@ const PrivateBoardPage: React.FC = () => {
             <AiOutlineLeft size={20} />
           </button>
 
-          {/* <div>
-            <DisplayButton
-              onClick={toggleModal}
-              title="Add Task"
-              image={<AiOutlinePlus />}
-            />
-            <Modal isOpen={modalOpen} onClose={toggleModal}>
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-semibold">Create Task</h2>
-                <button
-                  className="bg-primary text-white py-2 px-4 rounded"
-                  onClick={toggleModal}
-                >
-                  Close
-                </button>
-              </div>
+          {(user?.role === "admin" || user?.role === "teamLeader") && (
+            <div>
+              <DisplayButton
+                onClick={toggleModal}
+                title="Add Task"
+                image={<AiOutlinePlus />}
+              />
+              <Modal isOpen={modalOpen} onClose={toggleModal}>
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="text-xl font-semibold">Create Task</h2>
+                  <button
+                    className="bg-primary text-white py-2 px-4 rounded"
+                    onClick={toggleModal}
+                  >
+                    Close
+                  </button>
+                </div>
 
-              <CreateTaskForm onClose={toggleModal} />
-            </Modal>
-          </div> */}
+                <CreateTaskForm onClose={toggleModal} />
+              </Modal>
+            </div>
+          )}
         </div>
       </div>
 

@@ -14,10 +14,13 @@ import EditTaskForm from "@/components/forms/EditTaskForm";
 import PreviewForm from "@/components/forms/PreviewForm";
 import { fetchInviteTasks } from "@/redux/features/getInviteTaskSlice";
 // import CreateTaskForm from "@/components/forms/CreateTaskForm";
-import { AiOutlineLeft } from "react-icons/ai";
+import { AiOutlineLeft, AiOutlinePlus } from "react-icons/ai";
 // import DisplayButton from "@/components/button/DisplayButton";
 import { BASE_URL } from "@/config/api";
 import { userToken } from "@/config/auth";
+import { fetchUser } from "@/redux/features/getUserSlice";
+import DisplayButton from "@/components/button/DisplayButton";
+import CreateTaskForm from "@/components/forms/CreateTaskForm";
 // Helper function to get priority color based on the task's priority
 const getPriorityColor = (priority) => {
     switch (priority) {
@@ -79,8 +82,10 @@ const TaskColumn = React.memo(({ title, bgColor, tasks, columnId }) => {
     };
     useEffect(() => {
         dispatch(fetchAllUser());
+        dispatch(fetchUser());
     }, [dispatch]);
     const { data: allUser = [] } = useSelector((state) => state?.getAllUser || { data: [], loading: false });
+    const { data: user } = useSelector((state) => state.getUser);
     const getUserLabels = (assignedUsers, allUsers) => {
         if (!assignedUsers || assignedUsers.length === 0) {
             return "N/A"; // No users assigned
@@ -113,7 +118,8 @@ const TaskColumn = React.memo(({ title, bgColor, tasks, columnId }) => {
                                             onClick: () => handleDeleteClick(task),
                                         },
                                     ];
-                                    return (_jsx("div", { ref: provided.innerRef, ...provided.draggableProps, ...provided.dragHandleProps, children: _jsx(TaskCard, { title: task.title, subtitle: _jsx("span", { className: getPriorityColor(task.priority), children: task.priority }), mainIcon: _jsx(OptionButton, { options: options }), actionIcons: [
+                                    return (_jsx("div", { ref: provided.innerRef, ...provided.draggableProps, ...provided.dragHandleProps, children: _jsx(TaskCard, { title: task.title, subtitle: _jsx("span", { className: getPriorityColor(task.priority), children: task.priority }), mainIcon: user?.role === "admin" ||
+                                                user?.role === "teamLeader" ? (_jsx(OptionButton, { options: options })) : null, actionIcons: [
                                                 _jsx(GrTextAlignFull, { size: 20, onClick: () => handlePreviewClick(task) }, "1"),
                                                 // <FaRegComment size={20} key="2" />,
                                                 // <MdAttachment size={20} key="3" />,
@@ -129,9 +135,13 @@ const PrivateBoardPage = () => {
     const location = useLocation();
     const board = location.state?.board;
     const dispatch = useDispatch();
-    // const [modalOpen, setModalOpen] = useState(false); // State for add task modal
+    const [modalOpen, setModalOpen] = useState(false); // State for add task modal
     const [taskList, setTaskList] = useState([]); // Initialize with an empty array
     const { data: tasks, loading: isLoading = [] } = useSelector((state) => state?.getInviteTask);
+    useEffect(() => {
+        dispatch(fetchUser());
+    }, [dispatch]);
+    const { data: user } = useSelector((state) => state.getUser);
     useEffect(() => {
         if (board?.invited_by_id) {
             dispatch(fetchInviteTasks(board.invited_by_id)); // Pass invited_by_id to the thunk
@@ -255,10 +265,10 @@ const PrivateBoardPage = () => {
                 return "To Do"; // Fallback status (should not occur)
         }
     };
-    // const toggleModal = () => setModalOpen(!modalOpen);
+    const toggleModal = () => setModalOpen(!modalOpen);
     function goBack() {
         window.history.back();
     }
-    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "flex flex-row  justify-between", children: _jsx("div", { className: "flex gap-3 my-1", children: _jsx("button", { className: "bg-white p-1 px-4 rounded-md font-bold items-center justify-center flex text-primaryGray", onClick: goBack, children: _jsx(AiOutlineLeft, { size: 20 }) }) }) }), _jsx(DragDropContext, { onDragStart: onDragStart, onDragEnd: onDragEnd, children: _jsx("div", { className: "flex gap-3", children: columns.map((column, index) => (_jsx(TaskColumn, { title: column.title, bgColor: column.bgColor, tasks: column.tasks, columnId: column.columnId }, index))) }) })] }));
+    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "flex flex-row  justify-between", children: _jsxs("div", { className: "flex gap-3 my-1", children: [_jsx("button", { className: "bg-white p-1 px-4 rounded-md font-bold items-center justify-center flex text-primaryGray", onClick: goBack, children: _jsx(AiOutlineLeft, { size: 20 }) }), (user?.role === "admin" || user?.role === "teamLeader") && (_jsxs("div", { children: [_jsx(DisplayButton, { onClick: toggleModal, title: "Add Task", image: _jsx(AiOutlinePlus, {}) }), _jsxs(Modal, { isOpen: modalOpen, onClose: toggleModal, children: [_jsxs("div", { className: "flex items-center justify-between mb-8", children: [_jsx("h2", { className: "text-xl font-semibold", children: "Create Task" }), _jsx("button", { className: "bg-primary text-white py-2 px-4 rounded", onClick: toggleModal, children: "Close" })] }), _jsx(CreateTaskForm, { onClose: toggleModal })] })] }))] }) }), _jsx(DragDropContext, { onDragStart: onDragStart, onDragEnd: onDragEnd, children: _jsx("div", { className: "flex gap-3", children: columns.map((column, index) => (_jsx(TaskColumn, { title: column.title, bgColor: column.bgColor, tasks: column.tasks, columnId: column.columnId }, index))) }) })] }));
 };
 export default PrivateBoardPage;

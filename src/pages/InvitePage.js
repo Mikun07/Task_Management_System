@@ -26,7 +26,7 @@ const InvitePage = () => {
                 .then((response) => response.json())
                 .then((data) => {
                 navigate("/login");
-                toast.success("Response from server:", data?.message); // Debug the server response
+                toast.success("invite Approved", data?.message); // Debug the server response
             })
                 .catch((error) => {
                 toast.error("Error sending token:", error); // Handle any errors
