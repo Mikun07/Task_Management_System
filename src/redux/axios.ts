@@ -30,6 +30,7 @@ export const useInterceptor = (
         originalRequest._retry = true;
         try {
           localStorage.removeItem("userToken");
+          localStorage.removeItem("userToken");
           location.assign("/login");
         } catch (error) {
           return Promise.reject(error);

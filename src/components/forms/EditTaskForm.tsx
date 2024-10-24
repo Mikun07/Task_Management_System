@@ -16,6 +16,12 @@ import { useEffect } from "react";
 import { fetchAllUser } from "@/redux/features/getAllUserSlice";
 import { fetchTask } from "@/redux/features/getTaskSlice";
 
+interface User {
+  id: number;
+  first_name: string;
+  last_name: string;
+}
+
 interface Task {
   id: number;
   title: string;
@@ -99,13 +105,13 @@ const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
     }
   };
 
-  // const handleUsersChange = (selectedUser: OptionType | null) => {
-  //   if (selectedUser) {
-  //     methods.setValue("assigned_to", selectedUser.value);
-  //   } else {
-  //     methods.setValue("assigned_to", "");
-  //   }
-  // };
+  const handleUsersChange = (selectedUser: OptionType | null) => {
+    if (selectedUser) {
+      methods.setValue("assigned_to", selectedUser.value);
+    } else {
+      methods.setValue("assigned_to", "");
+    }
+  };
 
   const statusOptions = Status.map((status) => ({
     value: status.value,
@@ -121,6 +127,17 @@ const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
     dispatch(fetchAllUser());
   }, [dispatch]);
 
+  // Ensure allUser is always at least an empty array
+  const { data: allUser = [] } = useSelector(
+    (state: RootState) => state?.getAllUser || { data: [], loading: false }
+  ) as { data: User[]; loading: boolean };
+
+  // Use optional chaining in case allUser is null or undefined
+  const userOptions = allUser?.map((user) => ({
+    value: user.id.toString(),
+    label: `${user.last_name} ${user.first_name}`,
+  }));
+
   const handleEditTask: SubmitHandler<editTaskFormValues> = (
     editTaskValues
   ) => {
@@ -131,7 +148,7 @@ const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
       deadline: new Date(editTaskValues.deadline).toISOString(),
       priority: editTaskValues.priority,
       status: editTaskValues.status,
-      assigned_to: task.assigned_to, // Ensuring this is a string of user IDs
+      assigned_to: task.assigned_to || editTaskValues?.assigned_to, // Ensuring this is a string of user IDs
       created_at: task.created_at,
       owner_id: task.owner_id,
     };
@@ -176,19 +193,13 @@ const EditTaskForm = ({ task, onClose }: EditTaskFormProps) => {
             error={methods.formState.errors.description}
           />
 
-          {/* <SelectInput
+          <SelectInput
             options={userOptions}
             control={methods.control}
             handleChange={handleUsersChange}
             label="Assign To"
-            title={
-              Array.isArray(task.assigned_to)
-                ? task.assigned_to
-                    .map((user) => `${user.first_name} ${user.last_name}`)
-                    .join(", ")
-                : task.assigned_to
-            }
-          /> */}
+            title="Select a User...."
+          />
 
           <SelectInput
             options={priorityOptions}

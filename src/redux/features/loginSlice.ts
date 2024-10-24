@@ -40,6 +40,7 @@ const loginSlice = createSlice({
   reducers: {
     logout: (state) => {
       localStorage.removeItem("userToken");
+      localStorage.removeItem("userToken");
       state.isLoggedIn = false;
       state.data = null;
       location.assign("/login");

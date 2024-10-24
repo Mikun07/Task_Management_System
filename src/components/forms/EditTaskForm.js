@@ -62,13 +62,14 @@ const EditTaskForm = ({ task, onClose }) => {
             methods.setValue("status", "");
         }
     };
-    // const handleUsersChange = (selectedUser: OptionType | null) => {
-    //   if (selectedUser) {
-    //     methods.setValue("assigned_to", selectedUser.value);
-    //   } else {
-    //     methods.setValue("assigned_to", "");
-    //   }
-    // };
+    const handleUsersChange = (selectedUser) => {
+        if (selectedUser) {
+            methods.setValue("assigned_to", selectedUser.value);
+        }
+        else {
+            methods.setValue("assigned_to", "");
+        }
+    };
     const statusOptions = Status.map((status) => ({
         value: status.value,
         label: status.label,
@@ -80,6 +81,13 @@ const EditTaskForm = ({ task, onClose }) => {
     useEffect(() => {
         dispatch(fetchAllUser());
     }, [dispatch]);
+    // Ensure allUser is always at least an empty array
+    const { data: allUser = [] } = useSelector((state) => state?.getAllUser || { data: [], loading: false });
+    // Use optional chaining in case allUser is null or undefined
+    const userOptions = allUser?.map((user) => ({
+        value: user.id.toString(),
+        label: `${user.last_name} ${user.first_name}`,
+    }));
     const handleEditTask = (editTaskValues) => {
         const editTaskData = {
             id: task?.id,
@@ -88,7 +96,7 @@ const EditTaskForm = ({ task, onClose }) => {
             deadline: new Date(editTaskValues.deadline).toISOString(),
             priority: editTaskValues.priority,
             status: editTaskValues.status,
-            assigned_to: task.assigned_to, // Ensuring this is a string of user IDs
+            assigned_to: task.assigned_to || editTaskValues?.assigned_to, // Ensuring this is a string of user IDs
             created_at: task.created_at,
             owner_id: task.owner_id,
         };
@@ -109,6 +117,6 @@ const EditTaskForm = ({ task, onClose }) => {
             toast.error("Network Error");
         });
     };
-    return (_jsx("div", { className: "lg:w-[550px] md:w-[500px] w-full h-[400px] overflow-y-auto custom__scrollbar px-4", children: _jsx(FormProvider, { ...methods, children: _jsxs("form", { onSubmit: methods.handleSubmit(handleEditTask), className: "flex flex-col gap-y-4 my-4", children: [_jsx(NameInput, { name: "title", type: "text", label: "Title", placeholder: task?.title, error: methods.formState.errors.title }), _jsx(TextAreaInput, { name: "description", type: "text", label: "Description", placeholder: task?.description, error: methods.formState.errors.description }), _jsx(SelectInput, { options: priorityOptions, control: methods.control, handleChange: handlePriorityChange, label: "Priority", title: task?.priority }), _jsx(DateInput, { name: "deadline", label: "Deadline", placeholder: task?.deadline, error: methods.formState.errors.deadline }), _jsx(SelectInput, { options: statusOptions, control: methods.control, handleChange: handleStatusChange, label: "Status", title: task?.status }), _jsx(Button, { type: "submit", loading: isLoading, disabled: methods.formState.isSubmitting || !methods.formState.isValid, children: "Edit Task" })] }) }) }));
+    return (_jsx("div", { className: "lg:w-[550px] md:w-[500px] w-full h-[400px] overflow-y-auto custom__scrollbar px-4", children: _jsx(FormProvider, { ...methods, children: _jsxs("form", { onSubmit: methods.handleSubmit(handleEditTask), className: "flex flex-col gap-y-4 my-4", children: [_jsx(NameInput, { name: "title", type: "text", label: "Title", placeholder: task?.title, error: methods.formState.errors.title }), _jsx(TextAreaInput, { name: "description", type: "text", label: "Description", placeholder: task?.description, error: methods.formState.errors.description }), _jsx(SelectInput, { options: userOptions, control: methods.control, handleChange: handleUsersChange, label: "Assign To", title: "Select a User...." }), _jsx(SelectInput, { options: priorityOptions, control: methods.control, handleChange: handlePriorityChange, label: "Priority", title: task?.priority }), _jsx(DateInput, { name: "deadline", label: "Deadline", placeholder: task?.deadline, error: methods.formState.errors.deadline }), _jsx(SelectInput, { options: statusOptions, control: methods.control, handleChange: handleStatusChange, label: "Status", title: task?.status }), _jsx(Button, { type: "submit", loading: isLoading, disabled: methods.formState.isSubmitting || !methods.formState.isValid, children: "Edit Task" })] }) }) }));
 };
 export default EditTaskForm;

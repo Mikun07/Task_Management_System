@@ -102,12 +102,12 @@ const LoginPage = () => {
               />
 
               <div className="flex flex-col gap-1">
-                <p
+                {/* <p
                   onClick={handleForgotPassword}
                   className="capitalize flex justify-center text-[14px] pl-7 hover:text-primary hover:scale-105 transition duration-300 cursor-pointer"
                 >
                   forgot password?
-                </p>
+                </p> */}
                 <p className="capitalize flex justify-center text-[14px]">
                   Don’t have an account?{" "}
                   <span

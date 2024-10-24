@@ -10,7 +10,7 @@ import inviteUserSlice from "./features/inviteUserSlice";
 import getBoardSlice from "./features/getBoardSlice";
 import getInviteTaskSlice from "./features/getInviteTaskSlice";
 import inviteCreateTaskSlice from "./features/inviteCreateTaskSlice";
-import createTaskSlice from "./features/createTaskSlice";
+import createTaskSlice from "./features/CreateTaskSlice";
 
 const rootReducer = combineReducers({
   signUp: signUpSlice?.reducer,
