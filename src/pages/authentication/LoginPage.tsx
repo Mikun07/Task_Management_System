@@ -10,7 +10,6 @@ import { AppDispatch } from "@/redux/store";
 import { postLogin } from "@/redux/features/loginSlice";
 import toast from "react-hot-toast";
 import { RootState } from "@/redux/root";
-// import { PayloadAction } from "@reduxjs/toolkit";
 
 // interface loginPayload {
 //   username: string;
@@ -69,9 +68,9 @@ const LoginPage = () => {
       });
   };
 
-  const handleForgotPassword = () => {
-    navigate("/forgotPassword");
-  };
+  // const handleForgotPassword = () => {
+  //   navigate("/forgotPassword");
+  // };
 
   const handleSignUp = () => {
     navigate("/signUp");
